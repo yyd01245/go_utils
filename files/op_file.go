@@ -7,11 +7,11 @@ import(
 	"io/ioutil"
 	"strings"
 	"strconv"
-	"syscall"
 	log "github.com/Sirupsen/logrus"
 	"github.com/yyd01245/go_utils/process"
 )
 
+// CheckFileIsExist 检测文件是否存在
 func CheckFileIsExist(filename string) bool{
 	var exist =true
 	if _,err := os.Stat(filename); os.IsNotExist(err) {
@@ -22,6 +22,7 @@ func CheckFileIsExist(filename string) bool{
 	return exist
 }
 
+//WriteListLineToFile 写入字符串数组，每行一个
 func WriteListLineToFile(filename string, paramList[]string) error{
 
 	if len(paramList) == 0 {
@@ -46,7 +47,7 @@ func WriteListLineToFile(filename string, paramList[]string) error{
 	}
 	return nil
 }
-
+// WriteStringToFile 写入字符串到文件
 func WriteStringToFile(filename string, text string) error{
 
 	file, err := os.OpenFile(filename,os.O_CREATE|os.O_TRUNC|os.O_WRONLY,0644)
@@ -62,7 +63,7 @@ func WriteStringToFile(filename string, text string) error{
 	}
 	return nil
 }
-
+// AppendListLineToFile 最近字符串数组到文件，一行一个
 func AppendListLineToFile(filename string, paramList[]string) error{
 
 	if len(paramList) == 0 {
@@ -88,7 +89,7 @@ func AppendListLineToFile(filename string, paramList[]string) error{
 	}
 	return nil
 }
-
+//ReadFileAll 读取文件，以字符串返回
 func ReadFileAll(filename string) (string,error) {
 
 	b, err := ioutil.ReadFile(filename)
@@ -97,13 +98,13 @@ func ReadFileAll(filename string) (string,error) {
 	}
 	return string(b),nil
 }
-
+//CreateDir 创建目录   
 func CreateDir(path string) error {
 
 	return os.MkdirAll(path,0744)
 
 }
-
+//WritePidToFile 写入当前 pid 到文件中 
 func WritePidToFile(filename string) error {
 	file, err := os.OpenFile(filename,os.O_CREATE|os.O_TRUNC|os.O_WRONLY,0644)
 	if err != nil {
