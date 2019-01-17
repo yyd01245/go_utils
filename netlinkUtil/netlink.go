@@ -11,6 +11,7 @@ import (
 	"strings"
 	"strconv"
 	"golang.org/x/sys/unix"
+	"github.com/yyd01245/go_utils/files"
 )
 
 const ADDROUTE = "add"
@@ -953,7 +954,7 @@ func NetGetRuleObject(data NetRule) *NT.Rule {
 
 
 func GetTableIDFromName(name string) int {
-	tables,err := ReadFileAll("/etc/iproute2/rt_tables")
+	tables,err := files.ReadFileAll("/etc/iproute2/rt_tables")
 	if err != nil {
 		log.Errorf("read routes get failed: %v",err)
 		return -1
@@ -1235,7 +1236,7 @@ func ListAllRule() {
 func UpdateRouteTable(action string,tableName string, tableID int) error {
 	// 判断是否存在
 	const TABLE_FILE = "/etc/iproute2/rt_tables"
-	tables,err := ReadFileAll(TABLE_FILE)
+	tables,err := files.ReadFileAll(TABLE_FILE)
 	if err != nil {
 		log.Errorf("read routes get failed: %v",err)
 		return err
@@ -1294,7 +1295,7 @@ func UpdateRouteTable(action string,tableName string, tableID int) error {
 	log.Infof("after over tablesLine:%v,len=%d",tablesLine,len(tablesLine))
 
 	// 重新写入
-	err = WriteListLineToFile(TABLE_FILE,tablesLine)	
+	err = files.WriteListLineToFile(TABLE_FILE,tablesLine)	
 	if err != nil {
 		return err
 	}
