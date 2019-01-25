@@ -20,7 +20,7 @@ type IPCServer struct {
 
 
 func echoServer(this *IPCServer, c net.Conn) {
-	for {
+	// for {
 		buf := make([]byte, 512)
 		nr, err := c.Read(buf)
 		if err != nil {
@@ -34,7 +34,8 @@ func echoServer(this *IPCServer, c net.Conn) {
 		if err != nil {
 			log.Errorf("Writing client error: %v", err)
 		}
-	}
+		c.Close()
+	// }
 }
 
 func NewServer(sock string) *IPCServer {
