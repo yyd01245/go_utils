@@ -16,14 +16,16 @@ type IPCServer struct {
 	// 外部注册函数
 	Call CallbackFunc
 	lnSock net.Listener
+	ClosFlag bool
 }
 
 
 func echoServer(this *IPCServer, c net.Conn) {
-	// for {
+	for {
 		buf := make([]byte, 512)
 		nr, err := c.Read(buf)
 		if err != nil {
+			c.Close()
 			return
 		}
 		data := string(buf[0:nr])
@@ -34,14 +36,15 @@ func echoServer(this *IPCServer, c net.Conn) {
 		if err != nil {
 			log.Errorf("Writing client error: %v", err)
 		}
-		c.Close()
-	// }
+		// c.Close()
+	}
 }
 
 func NewServer(sock string) *IPCServer {
 	instance := new(IPCServer)
 	instance.sockFile = sock
 	instance.Call = nil
+	instance.ClosFlag = false
 	return instance
 }
 
@@ -58,7 +61,9 @@ func (this *IPCServer)Close() error {
 	// pid := syscall.Getppid()
 	// log.Infof("main: Killing pid: %v", pid)
 	// syscall.Kill(pid, syscall.SIGTERM)
+	this.ClosFlag = true
 	this.lnSock.Close()
+
 	return nil
 }
 
@@ -83,6 +88,9 @@ func (this *IPCServer)CreateServer() error {
 		fd, err := ln.Accept()
 		if err != nil {
 			log.Errorf("Accept error: ", err)
+			if this.ClosFlag {
+				break
+			}
 			continue
 		}
 
