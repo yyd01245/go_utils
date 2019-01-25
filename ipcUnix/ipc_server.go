@@ -2,9 +2,9 @@ package ipcUnix
 
 import (
 	"net"
-	"os"
-	"os/signal"
-	"syscall"
+	// "os"
+	// "os/signal"
+	// "syscall"
 	log "github.com/Sirupsen/logrus"
 
 )
@@ -15,6 +15,7 @@ type IPCServer struct {
 	sockFile string
 	// 外部注册函数
 	Call CallbackFunc
+	lnSock net.Listener
 }
 
 
@@ -53,9 +54,10 @@ func (this *IPCServer)RegsiterCallback(call CallbackFunc) error {
 }
 
 func (this *IPCServer)Close() error {
-	pid := syscall.Getppid()
-	log.Infof("main: Killing pid: %v", pid)
-	syscall.Kill(pid, syscall.SIGTERM)
+	// pid := syscall.Getppid()
+	// log.Infof("main: Killing pid: %v", pid)
+	// syscall.Kill(pid, syscall.SIGTERM)
+	this.lnSock.Close()
 	return nil
 }
 
@@ -66,15 +68,15 @@ func (this *IPCServer)CreateServer() error {
 		log.Fatalf("Listen error:%v",err)
 		return err
 	}
-
-	sigc := make(chan os.Signal, 1)
-	signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
-	go func(ln net.Listener, c chan os.Signal) {
-		sig := <-c
-		log.Infof("Caught signal %s: shutting down.", sig)
-		ln.Close()
-		os.Exit(0)
-	}(ln, sigc)
+	this.lnSock = ln
+	// sigc := make(chan os.Signal, 1)
+	// signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
+	// go func(ln net.Listener, c chan os.Signal) {
+	// 	sig := <-c
+	// 	log.Infof("Caught signal %s: shutting down.", sig)
+	// 	ln.Close()
+	// 	os.Exit(0)
+	// }(ln, sigc)
 
 	for {
 		fd, err := ln.Accept()
