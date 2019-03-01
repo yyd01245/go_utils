@@ -2,7 +2,7 @@ package process
 
 import(
 	"syscall"
-	log "github.com/Sirupsen/logrus"
+	// log "github.com/Sirupsen/logrus"
 
 )
 

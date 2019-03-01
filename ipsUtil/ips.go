@@ -9,14 +9,14 @@ import (
 	"strings"
 	// "math/big"
 	"github.com/yyd01245/go_utils/files"
-	log "github.com/Sirupsen/logrus"
+	// log "github.com/Sirupsen/logrus"
 )
 
 //GetMacAddrs get interface mac address
 func GetMacAddrs(ifname string) string {
 	netInterfaces, err := net.Interfaces()
 	if err != nil {
-			log.Errorf("fail to get net interfaces: %v", err)
+			// log.Errorf("fail to get net interfaces: %v", err)
 			return ""
 	}
 	macAddr := ""
@@ -51,7 +51,7 @@ func CheckPrivateIPValid(ipaddr string) bool {
 	// log.Debugf("check ip valid: %v",ipaddr)
 	ip, _, err := net.ParseCIDR(ipaddr)
 	if err != nil {
-		log.Errorf("check IP valid err:%v",err)
+		// log.Errorf("check IP valid err:%v",err)
 		return ret
 	}
 	ipv4Value := ip.To4()
@@ -76,7 +76,7 @@ func FindIfnameByAddresses(ipAddr string) (string,error) {
 	for _, ifi := range ifaces {
 		addrs, err := ifi.Addrs()
 		if err != nil {
-			log.Warnf("localAddresses: %v\n", err.Error())
+			// log.Warnf("localAddresses: %v\n", err.Error())
 			continue
 		}
 
