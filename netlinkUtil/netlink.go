@@ -282,9 +282,10 @@ func GetDefaultRouteObject(link NT.Link,outAddr string,tableID int) (*NT.Route,e
 	route := &NT.Route{
 		LinkIndex: link.Attrs().Index,
 		Dst:       nil,
-		Src:       src,
-		Gw:       nil,
-		Scope:     unix.RT_SCOPE_LINK,
+		// Src:       src,
+		Gw:       src,
+		// Scope:     unix.RT_SCOPE_LINK,
+		Scope: unix.RT_SCOPE_UNIVERSE,
 		// Priority:  13,
 		Table:     tableID,
 		// Type:      unix.RTN_UNICAST,
