@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 	"errors"
-	// log "github.com/Sirupsen/logrus"	
+	log "github.com/Sirupsen/logrus"	
 	NT "github.com/vishvananda/netlink"
 	// "github.com/vishvananda/netlink/nl"
 	// "reflect"
@@ -101,7 +101,7 @@ func LinkDelMacVlan(ifName string) error{
 	for _, l := range links {
 
 		if l.Attrs().Name == ifName {
-			txt := fmt.Sprintf("ifname link:%v exsit",ifName)
+			// txt := fmt.Sprintf("ifname link:%v exsit",ifName)
 			// //log.Infof(txt)
 			link = l
 			flag = true
@@ -466,7 +466,7 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered RT_SCOPE_UNIVERSE error:%v",err)
 		//log.Errorf(txt)
-		// return errors.New(txt)
+		return errors.New(txt)
 	}	
 	routes = append(routes,routesUN...)
 
@@ -492,7 +492,7 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
 		//log.Errorf(txt)
-		// return errors.New(txt)
+		return errors.New(txt)
 	}	
 	dstRoutes = append(dstRoutes,dstRoutesUN...)
 	
@@ -780,8 +780,8 @@ func NetListRouteByLink(link NT.Link,tableID int,scope int,gwIP string) error{
 		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
-	//log.Infof("route list: %v",routes)
-	//log.Infof("route list len: %v",len(routes))
+	log.Infof("route list: %v",routes)
+	log.Infof("route list len: %v",len(routes))
 	
 	return nil
 }
@@ -801,11 +801,11 @@ func NetListALLRoute(tableID int,scope int) error{
 		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
-	//log.Infof("route list: %v",routes)
-	//log.Infof("route list len: %v",len(routes))
-	// for i,v := range routes {
-	// 	//log.Infof("route index:%d, string:%s,struct:%v",i,v.String(),v)
-	// }
+	log.Infof("route list: %v",routes)
+	log.Infof("route list len: %v",len(routes))
+	for i,v := range routes {
+		log.Infof("route index:%d, string:%s,struct:%v",i,v.String(),v)
+	}
 	return nil
 }
 
@@ -900,7 +900,7 @@ func NetReplaceRoutePatch(dstRoutes []string,outData []OutInfo,tableID int) erro
 		// 
 		_, dst, err := net.ParseCIDR(ipAddr)
 		if err != nil {
-			txt := fmt.Sprintf("check IP valid err:%v",err)
+			// txt := fmt.Sprintf("check IP valid err:%v",err)
 			//log.Errorf(txt)
 			continue
 		}
@@ -965,9 +965,9 @@ func GetTableIDFromName(name string) int {
 			continue
 		}
 		//log.Infof("get tables: %v",value)
-		for index,v := range []byte(value) {
+		// for index,v := range []byte(value) {
 			//log.Debugf("=====index:%d,%c!",index,v)
-		}
+		// }
 		if strings.Index(value,name) > 0 {
 			// 尝试 水平定位符号 分割
 			data := []string{}
@@ -1117,7 +1117,7 @@ func NetVerifyExistRuleList(dstRules []*NT.Rule) error {
 	//log.Infof("dstRules:%v!",dstRules)
 	//log.Infof("---list len=%d!",len(rules))
 	// find this rule
-	for i,value := range rules {
+	for _,value := range rules {
 		//log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
 		// i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
 		// value.IifName,value.Invert,value.Mark,value.Goto,value.Mask,value)
@@ -1150,7 +1150,7 @@ func NetVerifyNotExistRuleList(dstRules []*NT.Rule) error {
 	//log.Infof("---list len=%d, dstrule len=%d!",len(rules),len(dstRules))
 	// find this rule
 	total := 0
-	for i,value := range rules {
+	for _,value := range rules {
 		//log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v! rule:%v!",
 		// i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
 		// value.IifName,value.Invert,value.Mark,value.Goto,value)
