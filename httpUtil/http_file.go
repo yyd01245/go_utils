@@ -16,7 +16,7 @@ import (
 	"net/http"
 	"os"
 	"time"
-	log "github.com/Sirupsen/logrus"	
+	// log "github.com/Sirupsen/logrus"	
 
 )
 
@@ -29,7 +29,7 @@ func DownloadFile(filepath string, url string) error {
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-		log.Warnf("create file:%v failed ",filepath)
+		// log.Warnf("create file:%v failed ",filepath)
 			return err
 	}
 	defer out.Close()
@@ -41,19 +41,19 @@ func DownloadFile(filepath string, url string) error {
 	// resp, err := http.Get(url)
 	resp, err := client.Get(url)
 	if err != nil {
-		log.Warnf("http get url:%v failed: %v ",url,err)
+		// log.Warnf("http get url:%v failed: %v ",url,err)
 		return err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == 200 {
 		_, err = io.Copy(out, resp.Body)
 		if err != nil {
-			log.Warnf("copy file:%v failed ",filepath)
+			// log.Warnf("copy file:%v failed ",filepath)
 				return err
 		}
 	} else {
 		txt := fmt.Sprintf("get http response code:%v  ",resp.StatusCode)
-		log.Warnf(txt)
+		// log.Warnf(txt)
 		return errors.New(txt)
 	}
 
@@ -119,7 +119,7 @@ func (this *HttpHandle)ResetHttpClient() {
 		TLSHandshakeTimeout:   TIMEOUTE * time.Second,
 		DisableCompression: true,
 	}
-	log.Warnf("ResetHttpClient http")
+	// log.Warnf("ResetHttpClient http")
 	// timeout := time.Duration(TIMEOUTE * time.Second)
 
 	// this.httpClient = &http.Client{
@@ -154,7 +154,7 @@ func (this *HttpHandle)PostRequest(url string, data map[string]string) (*ResponD
 		Timeout: timeout,
 		Transport: this.httpTR,
 	}
-	log.Debugf("--------begin %p, lock url:%v=--------",this,url)
+	// log.Debugf("--------begin %p, lock url:%v=--------",this,url)
 	// defer this.mux.Unlock()
 	req, err := http.NewRequest("POST", url, strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -162,19 +162,19 @@ func (this *HttpHandle)PostRequest(url string, data map[string]string) (*ResponD
 	// req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := httpClient.Do(req)
 	defer func(){
-		log.Debugf("--------begin %p, unlock url:%v=--------",this,url)
+		// log.Debugf("--------begin %p, unlock url:%v=--------",this,url)
 		this.mux.Unlock()
 		req.Close = true
 	}()
 	if err != nil {
-		log.Errorf("PostRequest unable ro reach the serve:%v, err:%v",url,err)
+		// log.Errorf("PostRequest unable ro reach the serve:%v, err:%v",url,err)
 		// this.ResetHttpClient()
 		return respData,err
 	} 
 	body, _ := ioutil.ReadAll(resp.Body)
 	respData.BodyData = string(body)
 	respData.StatusCode = resp.StatusCode
-	log.Debugf("resp=%v", respData)
+	// log.Debugf("resp=%v", respData)
 	return respData, err
 }
 
@@ -196,17 +196,17 @@ func (this *HttpHandle)GetHttpDataWitchCode(url string) (*ResponData,error) {
 		Timeout: timeout,
 		Transport: this.httpTR,
 	}
-	log.Debugf("--------begin %p, lock url:%v=--------",this,url)
+	// log.Debugf("--------begin %p, lock url:%v=--------",this,url)
 	// defer this.mux.Unlock()
 	req, err := http.NewRequest("GET", url, nil)
 	resp, err := httpClient.Do(req)
 	defer func(){
-		log.Debugf("--------begin %p, unlock url:%v=--------",this,url)
+		// log.Debugf("--------begin %p, unlock url:%v=--------",this,url)
 		this.mux.Unlock()
 		req.Close = true
 	}()
 	if err != nil {
-		log.Errorf("GetHttpDataWitchCode unable ro reach the serve:%v, err:%v",url,err)
+		// log.Errorf("GetHttpDataWitchCode unable ro reach the serve:%v, err:%v",url,err)
 		// this.ResetHttpClient()
 		return data,err
 	} 
@@ -214,7 +214,7 @@ func (this *HttpHandle)GetHttpDataWitchCode(url string) (*ResponData,error) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	data.BodyData = string(body)
 	data.StatusCode = resp.StatusCode
-	log.Debugf("respon data=%v", data)
+	// log.Debugf("respon data=%v", data)
 	// txt := fmt.Sprintf("get http response code:%v",resp.StatusCode)
 	// log.Warnf(txt)
 	return data, err
@@ -235,17 +235,17 @@ func (this *HttpHandle)GetHttpData(url string) (string,error) {
 		Timeout: timeout,
 		Transport: this.httpTR,
 	}
-	log.Debugf("--------begin %p, lock url:%v=--------",this,url)
+	// log.Debugf("--------begin %p, lock url:%v=--------",this,url)
 	// defer this.mux.Unlock()
 	req, err := http.NewRequest("GET", url, nil)
 	resp, err := httpClient.Do(req)
 	defer func(){
-		log.Debugf("--------begin %p, unlock url:%v=--------",this,url)
+		// log.Debugf("--------begin %p, unlock url:%v=--------",this,url)
 		this.mux.Unlock()
 		req.Close = true
 	}()
 	if err != nil {
-		log.Errorf("GetHttpData unable ro reach the serve:%v, err:%v",url,err)
+		// log.Errorf("GetHttpData unable ro reach the serve:%v, err:%v",url,err)
 		this.ResetHttpClient()
 		return data,err
 	} 
@@ -259,11 +259,11 @@ func (this *HttpHandle)GetHttpData(url string) (string,error) {
 	if resp.StatusCode == 200 || resp.StatusCode == 404  {
 		body, _ := ioutil.ReadAll(resp.Body)
 		data = string(body)
-		log.Debugf("body=%v", data)
+		// log.Debugf("body=%v", data)
 		err = nil
 	} else {
 		txt := fmt.Sprintf("get http response code:%v",resp.StatusCode)
-		log.Warnf(txt)
+		// log.Warnf(txt)
 		err = errors.New(txt)
 	}
 
@@ -277,7 +277,7 @@ func DownloadFileOperatorError(filepath string, url string) error {
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
-		log.Warnf("create file:%v failed ",filepath)
+		// log.Warnf("create file:%v failed ",filepath)
 			return err
 	}
 	defer out.Close()
@@ -285,22 +285,23 @@ func DownloadFileOperatorError(filepath string, url string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Warnf("http get url:%v failed: %v ",url,err)
+		// log.Warnf("http get url:%v failed: %v ",url,err)
 		resCode := resp.StatusCode 
 		if resCode != 404 {
 			// 404 not found
 			return err
 		}
-		log.Warnf("respone code status : %v",resCode)
+		// log.Warnf("respone code status : %v",resCode)
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 			// handle error
-			log.Warnf("get body error %v",body)
+			// log.Warnf("get body error %v",body)
+			return err
 	}
-	log.Infof("body: %v",body)
+	// log.Infof("body: %v",body)
 	// Write the body to file
 
 	out.WriteString(string(body))

@@ -21,10 +21,10 @@ func LinkAddMacVlan(ifName string,parentIfname string) error{
 	// list link 
 	links, err := NT.LinkList()
 	if err != nil {
-		log.Errorf("Link list error: %v",err)
+		//log.Errorf("Link list error: %v",err)
 		return err
 	}
-	log.Infof("---links: %v",links)
+	// //log.Infof("---links: %v",links)
 	var parent NT.Link
 	for _, l := range links {
 		if l.Attrs().Name == parentIfname {
@@ -33,7 +33,7 @@ func LinkAddMacVlan(ifName string,parentIfname string) error{
 		}
 		if l.Attrs().Name == ifName {
 			txt := fmt.Sprintf("ifname link:%v exsit",ifName)
-			log.Infof(txt)
+			// //log.Infof(txt)
 			return errors.New(txt)
 		}
 	}
@@ -41,10 +41,10 @@ func LinkAddMacVlan(ifName string,parentIfname string) error{
 		LinkAttrs: NT.LinkAttrs{Name: ifName, ParentIndex: parent.Attrs().Index},
 		Mode:      NT.MACVLAN_MODE_BRIDGE,
 	}
-	log.Infof("---link:%v",link)
+	// //log.Infof("---link:%v",link)
 
 	if err := NT.LinkAdd(link); err != nil {
-		log.Errorf("Link Add interface:%v, parent interface:%v error: %v",ifName,parentIfname,err)
+		// //log.Errorf("Link Add interface:%v, parent interface:%v error: %v",ifName,parentIfname,err)
 		return err
 	}
 
@@ -52,7 +52,7 @@ func LinkAddMacVlan(ifName string,parentIfname string) error{
 
 	result, err := NT.LinkByName(base.Name)
 	if err != nil {
-		log.Errorf("Link byname error: %v",err)
+		// //log.Errorf("Link byname error: %v",err)
 		return err
 	}
 
@@ -61,26 +61,26 @@ func LinkAddMacVlan(ifName string,parentIfname string) error{
 	if base.Index != 0 {
 		if base.Index != rBase.Index {
 			txt := fmt.Sprintf("index is %d, should be %d", rBase.Index, base.Index)
-			log.Errorf(txt)
+			// //log.Errorf(txt)
 			return errors.New(txt)
 		}
 	}
 
 	links, err = NT.LinkList()
 	if err != nil {
-		log.Errorf("Link list error: %v",err)
+		// //log.Errorf("Link list error: %v",err)
 		return err
 	}
 	flag := false
 	for _, l := range links {
 		if l.Attrs().Name == link.Attrs().Name {
-			log.Infof("Link macvlan properly:%v",l)
+			// //log.Infof("Link macvlan properly:%v",l)
 			flag = true
 			break;
 		}
 	}
 	if flag == false {
-		log.Errorf("link macvlan add failed!!!")
+		// //log.Errorf("link macvlan add failed!!!")
 		return errors.New("link macvlan add failed!!!")
 	}
 	// up 
@@ -92,17 +92,17 @@ func LinkDelMacVlan(ifName string) error{
 	// list link 
 	links, err := NT.LinkList()
 	if err != nil {
-		log.Errorf("Link list error: %v",err)
+		// //log.Errorf("Link list error: %v",err)
 		return err
 	}
-	log.Infof("---links: %v",links)
+	// //log.Infof("---links: %v",links)
 	var link NT.Link
 	flag := false
 	for _, l := range links {
 
 		if l.Attrs().Name == ifName {
 			txt := fmt.Sprintf("ifname link:%v exsit",ifName)
-			log.Infof(txt)
+			// //log.Infof(txt)
 			link = l
 			flag = true
 			break;
@@ -110,29 +110,29 @@ func LinkDelMacVlan(ifName string) error{
 	}
 	if !flag {
 		txt := fmt.Sprintf("virtural macvlan:%v not exsit!!!",ifName)
-		log.Infof(txt)
+		// //log.Infof(txt)
 		return errors.New(txt)
 	}
 	if err := NT.LinkDel(link); err != nil {
-		log.Errorf("Link Del error: %v",err)
+		// //log.Errorf("Link Del error: %v",err)
 		return err
 	}
 
 	links, err = NT.LinkList()
 	if err != nil {
-		log.Errorf("Link list error: %v",err)
+		// //log.Errorf("Link list error: %v",err)
 		return err
 	}
 	flag = false
 	for _, l := range links {
 		if l.Attrs().Name == ifName {
-			log.Infof("Link macvlan properly:%v",l)
+			// //log.Infof("Link macvlan properly:%v",l)
 			flag = true
 			break;
 		}
 	}
 	if flag {
-		log.Errorf("link macvlan del failed!!!")
+		// //log.Errorf("link macvlan del failed!!!")
 		return errors.New("link macvlan del failed!!!")
 	}
 	return nil
@@ -143,10 +143,10 @@ func LinkAddVlan(vlanID int,ifName string,parentIfname string) error {
 	// list link 
 	links, err := NT.LinkList()
 	if err != nil {
-		log.Errorf("Link list error: %v",err)
+		// ////log.Errorf("Link list error: %v",err)
 		return err
 	}
-	log.Infof("---links: %v",links)
+	// ////log.Infof("---links: %v",links)
 	var parent NT.Link
 	for _, l := range links {
 		if l.Attrs().Name == parentIfname {
@@ -155,7 +155,7 @@ func LinkAddVlan(vlanID int,ifName string,parentIfname string) error {
 		}
 		if l.Attrs().Name == ifName {
 			txt := fmt.Sprintf("ifname link:%v exsit",ifName)
-			log.Infof(txt)
+			//log.Infof(txt)
 			return errors.New(txt)
 		}
 	}
@@ -164,21 +164,21 @@ func LinkAddVlan(vlanID int,ifName string,parentIfname string) error {
 		LinkAttrs: NT.LinkAttrs{Name: ifName, ParentIndex: parent.Attrs().Index},
 		VlanId: vlanID,
 	}
-	log.Infof("---link:%v",link)
+	//log.Infof("---link:%v",link)
 
 	if err := NT.LinkAdd(link); err != nil {
-		log.Errorf("Link Add interface:%v, parent interface:%v error: %v",ifName,parentIfname,err)
+		//log.Errorf("Link Add interface:%v, parent interface:%v error: %v",ifName,parentIfname,err)
 		return err
 	}
 	_, err = NT.LinkByName(ifName)
 	if err != nil {
-		log.Errorf("Link byname error: %v",err)
+		//log.Errorf("Link byname error: %v",err)
 		return err
 	}
 	// up 
 	// NT.LinkSetUp(link)
 	if err = NT.LinkSetUp(link); err != nil {
-		log.Errorf("setup link device:%v error: %v",ifName,err)
+		//log.Errorf("setup link device:%v error: %v",ifName,err)
 		return err
 	}
 
@@ -190,20 +190,20 @@ func SetLinkAddr(ipaddr string,ifName string) error {
 	_, address, err := net.ParseCIDR(ipaddr)
 	if err != nil {
 		txt := fmt.Sprintf("check IP valid err:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}
 	var addr = &NT.Addr{IPNet: address}
 
 	link, err := NT.LinkByName(ifName)
 	if err != nil {
-		log.Errorf("Link byname error: %v",err)
+		//log.Errorf("Link byname error: %v",err)
 		return err
 	}
 
 	err = NT.AddrAdd(link, addr)
 	if err != nil {
-		log.Errorf("AddrAdd error: %v",err)
+		//log.Errorf("AddrAdd error: %v",err)
 		return err
 	}
 	return nil
@@ -214,17 +214,17 @@ func DeleteLink(ifName string) error {
 
 	link, err := NT.LinkByName(ifName)
 	if err != nil {
-		log.Errorf("find link device:%v error: %v",ifName,err)
+		//log.Errorf("find link device:%v error: %v",ifName,err)
 		return err
 	}
 	if err := NT.LinkDel(link); err != nil {
-		log.Errorf("Link Del link error: %v",err)
+		//log.Errorf("Link Del link error: %v",err)
 		return err
 	}
 	link, err = NT.LinkByName(ifName)
 	if err == nil {
 		txt := fmt.Sprintf("delete link device:%v failed!",ifName)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}
 	return nil
@@ -235,12 +235,12 @@ func GetLinkDevice(ifName string) (NT.Link,error) {
 
 	link, err := NT.LinkByName(ifName)
 	if err != nil {
-		log.Errorf("find link device:%v error: %v",ifName,err)
+		//log.Errorf("find link device:%v error: %v",ifName,err)
 		return link,err
 	}
 	// bring the interface up
 	if err = NT.LinkSetUp(link); err != nil {
-		log.Errorf("setup link device:%v error: %v",ifName,err)
+		//log.Errorf("setup link device:%v error: %v",ifName,err)
 		return link,err
 	}
 	return link,nil
@@ -250,13 +250,13 @@ func GetRouteObject(link NT.Link,ipaddr string,outAddr string,tableID int) (*NT.
 	_, dst, err := net.ParseCIDR(ipaddr)
 	if err != nil {
 		txt := fmt.Sprintf("check IP valid err:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return nil,errors.New(txt)
 	}
-	log.Debugf("dst cidr=%v",dst)
+	//log.Debugf("dst cidr=%v",dst)
 	src := net.ParseIP(outAddr)
 
-	log.Debugf("src ip=%v",src)
+	//log.Debugf("src ip=%v",src)
 
 	route := &NT.Route{
 		LinkIndex: link.Attrs().Index,
@@ -269,7 +269,7 @@ func GetRouteObject(link NT.Link,ipaddr string,outAddr string,tableID int) (*NT.
 		// Type:      unix.RTN_UNICAST,
 		// Tos:       14,
 	}
-	log.Debugf("--- route: %v",route)
+	//log.Debugf("--- route: %v",route)
 	return route,nil 
 }
 
@@ -277,7 +277,7 @@ func GetDefaultRouteObject(link NT.Link,outAddr string,tableID int) (*NT.Route,e
 
 	src := net.ParseIP(outAddr)
 
-	log.Infof("src ip=%v",src)
+	//log.Infof("src ip=%v",src)
 
 	route := &NT.Route{
 		LinkIndex: link.Attrs().Index,
@@ -290,7 +290,7 @@ func GetDefaultRouteObject(link NT.Link,outAddr string,tableID int) (*NT.Route,e
 		// Type:      unix.RTN_UNICAST,
 		// Tos:       14,
 	}
-	log.Infof("--- route: %v",route)
+	//log.Infof("--- route: %v",route)
 	return route,nil 
 }
 
@@ -299,14 +299,14 @@ func NetAddOrDelRouteByLink(action string,route *NT.Route) error{
 	// // add a gateway route
 	if route == nil {
 		txt := fmt.Sprintf("add route error: route is nil")
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}
 	if action == ADDROUTE {
-		log.Debugf("---add route: %v",route)
+		//log.Debugf("---add route: %v",route)
 		if err := NT.RouteReplace(route); err != nil {
 			txt := fmt.Sprintf("add route error:%v",err)
-			log.Warnf(txt)
+			//log.Warnf(txt)
 			return errors.New(txt)
 		}
 	}else if action == DELROUTE {
@@ -314,25 +314,25 @@ func NetAddOrDelRouteByLink(action string,route *NT.Route) error{
 		// routes, err := NT.RouteListFiltered(NT.FAMILY_V4, route, NT.RT_FILTER_DST|NT.RT_FILTER_GW|NT.RT_FILTER_TABLE)
 		// if err != nil {
 		// 	txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		// 	log.Errorf(txt)
+		// 	//log.Errorf(txt)
 		// 	return errors.New(txt)
 		// }	
-		// log.Infof("route list: %v",routes)
+		// //log.Infof("route list: %v",routes)
 	
 		// if len(routes) != 1 {
 		// 	txt := fmt.Sprintf("Route not added properly:%v",routes)
-		// 	log.Errorf(txt)
+		// 	//log.Errorf(txt)
 		// 	return errors.New(txt)
 		// }
-		log.Debugf("---delete route: %v",route)
+		//log.Debugf("---delete route: %v",route)
 		if err := NT.RouteDel(route); err != nil {
 			txt := fmt.Sprintf("add route error:%v",err)
-			log.Errorf(txt)
+			//log.Errorf(txt)
 			return errors.New(txt)
 		}
 	}else {
 		txt := "route unkown action type"
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}
 	return nil
@@ -345,17 +345,17 @@ func NetAddRoutePatch(link NT.Link,dstRoutes []string,outAddr string,tableID int
 		// 
 		route,err := GetRouteObject(link,ipAddr,outAddr,tableID)
 		if err != nil {
-			log.Errorf("get route from ipAddr:%s error!!",ipAddr)
+			//log.Errorf("get route from ipAddr:%s error!!",ipAddr)
 			continue
 		}
 		err = NetAddOrDelRouteByLink("add",route)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",route,err)
+			//log.Errorf("add route:%v failed:%v!!",route,err)
 			continue
 		}
 		total++
 	}
-	log.Infof("add route total:%v!",total)
+	//log.Infof("add route total:%v!",total)
 	return nil
 }
 
@@ -372,7 +372,7 @@ func NetSyncSopeLinkRouteTable(link NT.Link,srcTableID int,dstTableID int) error
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
 	
@@ -386,7 +386,7 @@ func NetSyncSopeLinkRouteTable(link NT.Link,srcTableID int,dstTableID int) error
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
 
@@ -403,7 +403,7 @@ func NetSyncSopeLinkRouteTable(link NT.Link,srcTableID int,dstTableID int) error
 			// 找到则 60.191.85.65/32 格式为带掩码
 			if R.Dst.String() == r.Dst.String() {
 				flag = true
-				log.Infof("find route:%v, route:%v",r,R)
+				//log.Infof("find route:%v, route:%v",r,R)
 				dstRoutes = append(dstRoutes[:index],dstRoutes[index+1:]...)
 				break
 			}
@@ -411,32 +411,32 @@ func NetSyncSopeLinkRouteTable(link NT.Link,srcTableID int,dstTableID int) error
 		if flag {
 			continue
 		}
-		// log.Infof("delete route: %v!",R)
+		// //log.Infof("delete route: %v!",R)
 		R.Table = dstTableID 
 		err = NetAddOrDelRouteByLink("add",&R)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",R,err)
+			//log.Errorf("add route:%v failed:%v!!",R,err)
 			continue
 		}
 		total++
 	}
-	log.Infof("NetSyncSopeLinkRouteTable del route total:%v!",total)
+	//log.Infof("NetSyncSopeLinkRouteTable del route total:%v!",total)
 	total = 0
 	// 添加
-	// log.Infof("last need to delete scope link route:%v,len=%v!",dstRoutes,len(dstRoutes))
+	// //log.Infof("last need to delete scope link route:%v,len=%v!",dstRoutes,len(dstRoutes))
 	for _,route := range dstRoutes {
 		if route.Dst == nil {
 			continue
 		}
-		log.Infof("need to delete scope link  ip:%v",route)
+		//log.Infof("need to delete scope link  ip:%v",route)
 		err = NetAddOrDelRouteByLink("del",&route)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",route,err)
+			//log.Errorf("add route:%v failed:%v!!",route,err)
 			continue
 		}
 		total++
 	}
-	log.Infof("delete scope link route total:%v!",total)
+	//log.Infof("delete scope link route total:%v!",total)
 
 	return nil
 }
@@ -453,7 +453,7 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered RT_SCOPE_LINK error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
 	
@@ -465,7 +465,7 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 		NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered RT_SCOPE_UNIVERSE error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		// return errors.New(txt)
 	}	
 	routes = append(routes,routesUN...)
@@ -479,7 +479,7 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered RT_SCOPE_LINK error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
 	dstRoute = NT.Route{
@@ -491,7 +491,7 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		// return errors.New(txt)
 	}	
 	dstRoutes = append(dstRoutes,dstRoutesUN...)
@@ -513,7 +513,7 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 			// 找到则 60.191.85.65/32 格式为带掩码
 			if R.Dst.String() == r.Dst.String() {
 				flag = true
-				log.Infof("find route:%v, route:%v",r,R)
+				//log.Infof("find route:%v, route:%v",r,R)
 				dstRoutes = append(dstRoutes[:index],dstRoutes[index+1:]...)
 				break
 			}
@@ -525,17 +525,17 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 		R.Table = dstTableID 
 		err = NetAddOrDelRouteByLink("add",&R)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",R,err)
+			//log.Errorf("add route:%v failed:%v!!",R,err)
 			continue
 		}
 		total++
 	}
-	log.Infof("NetVerfiyRouteTable del route total:%v!",total)
+	//log.Infof("NetVerfiyRouteTable del route total:%v!",total)
 	total = 0
 	// 添加
-	// log.Infof("last need to delete scope link route:%v,len=%v!",dstRoutes,len(dstRoutes))
+	// //log.Infof("last need to delete scope link route:%v,len=%v!",dstRoutes,len(dstRoutes))
 
-	log.Infof("delete scope link route total:%v!",total)
+	//log.Infof("delete scope link route total:%v!",total)
 
 	return nil
 }
@@ -558,7 +558,7 @@ func NetSyncRoutePatch(link NT.Link,data []string,tableID int,scope int,gwIP str
 	gw := net.ParseIP(gwIP)
 
 	dstRoutes := RemoveRepByMap(data)
-	log.Infof("remoce repeat data: len=%d",len(dstRoutes))
+	//log.Infof("remoce repeat data: len=%d",len(dstRoutes))
 	// 不能删除 default 和 scope link 以及保留的地址
 	route := NT.Route{
 		LinkIndex: link.Attrs().Index,
@@ -571,7 +571,7 @@ func NetSyncRoutePatch(link NT.Link,data []string,tableID int,scope int,gwIP str
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE|NT.RT_FILTER_GW)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
 	for _,R := range routes {
@@ -583,7 +583,7 @@ func NetSyncRoutePatch(link NT.Link,data []string,tableID int,scope int,gwIP str
 			}
 			if R.Dst.String() == ipAddr {
 				flag = true
-				log.Debugf("find route:%v, route:%v",ipAddr,R)
+				//log.Debugf("find route:%v, route:%v",ipAddr,R)
 				dstRoutes = append(dstRoutes[:index],dstRoutes[index+1:]...)
 				break
 			}
@@ -591,37 +591,37 @@ func NetSyncRoutePatch(link NT.Link,data []string,tableID int,scope int,gwIP str
 		if flag {
 			continue
 		}
-		// log.Infof("delete route: %v!",R)
+		// //log.Infof("delete route: %v!",R)
 		err = NetAddOrDelRouteByLink("del",&R)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",R,err)
+			//log.Errorf("add route:%v failed:%v!!",R,err)
 			continue
 		}
 		total++
 	}
-	log.Infof("NetSyncRoutePatch del route total:%v!",total)
+	//log.Infof("NetSyncRoutePatch del route total:%v!",total)
 	total = 0
 	// 添加
-	log.Infof("last need to add route len=%v!",len(dstRoutes))
+	//log.Infof("last need to add route len=%v!",len(dstRoutes))
 	for _,ipAddr := range dstRoutes {
 		// 
 		if ipAddr == "" {
 			continue
 		}
-		log.Debugf("begin add ip:%v",ipAddr)
+		//log.Debugf("begin add ip:%v",ipAddr)
 		route,err := GetRouteObject(link,ipAddr,gwIP,tableID)
 		if err != nil {
-			log.Errorf("get route from ipAddr:%s error!!",ipAddr)
+			//log.Errorf("get route from ipAddr:%s error!!",ipAddr)
 			continue
 		}
 		err = NetAddOrDelRouteByLink("add",route)
 		if err != nil {
-			log.Warnf("add route:%v failed:%v!!",route,err)
+			//log.Warnf("add route:%v failed:%v!!",route,err)
 			continue
 		}
 		total++
 	}
-	log.Infof("NetSyncRoutePatch add route total:%v!",total)
+	//log.Infof("NetSyncRoutePatch add route total:%v!",total)
 
 	return nil
 }
@@ -642,7 +642,7 @@ func NetVerifyRoutePatch(link NT.Link,dstRoutes []string,tableID int,scope int,g
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE|NT.RT_FILTER_GW)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
 
@@ -655,7 +655,7 @@ func NetVerifyRoutePatch(link NT.Link,dstRoutes []string,tableID int,scope int,g
 			// 找到则 60.191.85.65/32 格式为带掩码
 			if R.Dst.String() == ipAddr {
 				flag = true
-				log.Infof("find route:%v, route:%v",ipAddr,R)
+				//log.Infof("find route:%v, route:%v",ipAddr,R)
 				dstRoutes = append(dstRoutes[:index],dstRoutes[index+1:]...)
 				break
 			}
@@ -666,26 +666,26 @@ func NetVerifyRoutePatch(link NT.Link,dstRoutes []string,tableID int,scope int,g
 	}
 	total = 0
 	// 添加
-	log.Infof("NetVerifyRoutePatch last need to add route:%v,len=%v!",dstRoutes,len(dstRoutes))
+	//log.Infof("NetVerifyRoutePatch last need to add route:%v,len=%v!",dstRoutes,len(dstRoutes))
 	for _,ipAddr := range dstRoutes {
 		// 
 		if ipAddr == "" {
 			continue
 		}
-		log.Infof("begin add ip:%v",ipAddr)
+		//log.Infof("begin add ip:%v",ipAddr)
 		route,err := GetRouteObject(link,ipAddr,gwIP,tableID)
 		if err != nil {
-			log.Errorf("get route from ipAddr:%s error!!",ipAddr)
+			//log.Errorf("get route from ipAddr:%s error!!",ipAddr)
 			continue
 		}
 		err = NetAddOrDelRouteByLink("add",route)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",route,err)
+			//log.Errorf("add route:%v failed:%v!!",route,err)
 			continue
 		}
 		total++
 	}
-	log.Infof("NetVerifyRoutePatch add route total:%v!",total)
+	//log.Infof("NetVerifyRoutePatch add route total:%v!",total)
 
 	return nil
 }
@@ -707,7 +707,7 @@ func NetDelRoutePatch(link NT.Link,dstRoutes []string,tableID int,scope int,gwIP
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE|NT.RT_FILTER_GW)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
 	for _,R := range routes {
@@ -719,7 +719,7 @@ func NetDelRoutePatch(link NT.Link,dstRoutes []string,tableID int,scope int,gwIP
 			}
 			if R.Dst.String() == ipAddr {
 				flag = true
-				log.Infof("find route:%v, route:%v",ipAddr,R)
+				//log.Infof("find route:%v, route:%v",ipAddr,R)
 				dstRoutes = append(dstRoutes[:index],dstRoutes[index+1:]...)
 				break
 			}
@@ -727,17 +727,17 @@ func NetDelRoutePatch(link NT.Link,dstRoutes []string,tableID int,scope int,gwIP
 		if !flag {
 			continue
 		}
-		// log.Infof("delete route: %v!",R)
+		// //log.Infof("delete route: %v!",R)
 		err = NetAddOrDelRouteByLink("del",&R)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",R,err)
+			//log.Errorf("add route:%v failed:%v!!",R,err)
 			continue
 		}
 		total++
 	}
 
 
-	log.Infof("NetDelRoutePatch del route total:%v!",total)
+	//log.Infof("NetDelRoutePatch del route total:%v!",total)
 	return nil
 }
 
@@ -748,14 +748,14 @@ func NetFindRouteByLink(link NT.Link,tableID int,route *NT.Route) error{
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE|NT.RT_FILTER_DST|NT.RT_FILTER_SRC|NT.RT_FILTER_GW)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
-	log.Infof("route list: %v",routes)
-	log.Infof("route list len: %v",len(routes))
+	//log.Infof("route list: %v",routes)
+	//log.Infof("route list len: %v",len(routes))
 	if len(routes) != 1 {
 		txt := fmt.Sprintf("RouteListFiltered failed:%v",route)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}
 	return nil
@@ -777,11 +777,11 @@ func NetListRouteByLink(link NT.Link,tableID int,scope int,gwIP string) error{
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE|NT.RT_FILTER_GW)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
-	log.Infof("route list: %v",routes)
-	log.Infof("route list len: %v",len(routes))
+	//log.Infof("route list: %v",routes)
+	//log.Infof("route list len: %v",len(routes))
 	
 	return nil
 }
@@ -798,14 +798,14 @@ func NetListALLRoute(tableID int,scope int) error{
 			NT.RT_FILTER_TABLE|NT.RT_FILTER_SCOPE)
 	if err != nil {
 		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}	
-	log.Infof("route list: %v",routes)
-	log.Infof("route list len: %v",len(routes))
-	for i,v := range routes {
-		log.Infof("route index:%d, string:%s,struct:%v",i,v.String(),v)
-	}
+	//log.Infof("route list: %v",routes)
+	//log.Infof("route list len: %v",len(routes))
+	// for i,v := range routes {
+	// 	//log.Infof("route index:%d, string:%s,struct:%v",i,v.String(),v)
+	// }
 	return nil
 }
 
@@ -819,10 +819,10 @@ func GetRouteMultiPathObject(ipaddr string,outPath []OutInfo,tableID int) (*NT.R
 	_, dst, err := net.ParseCIDR(ipaddr)
 	if err != nil {
 		txt := fmt.Sprintf("check IP valid err:%v",err)
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return nil,errors.New(txt)
 	}
-	log.Debugf("dst cidr=%v",dst)
+	//log.Debugf("dst cidr=%v",dst)
 
 	length := len(outPath)
 	if length > 1 {
@@ -832,7 +832,7 @@ func GetRouteMultiPathObject(ipaddr string,outPath []OutInfo,tableID int) (*NT.R
 			gw := net.ParseIP(data.OutAddr)
 			link,err := GetLinkDevice(data.DevName)
 			if err != nil {
-				log.Errorf("error get device link:%v failed:%v!!!",data.DevName,err)
+				//log.Errorf("error get device link:%v failed:%v!!!",data.DevName,err)
 				continue
 			}
 			hop := &NT.NexthopInfo{
@@ -842,7 +842,7 @@ func GetRouteMultiPathObject(ipaddr string,outPath []OutInfo,tableID int) (*NT.R
 			}
 			NexthopList = append(NexthopList,hop)
 		}
-		log.Debugf("NexthopList:%v",NexthopList)
+		//log.Debugf("NexthopList:%v",NexthopList)
 		route := &NT.Route{
 			// LinkIndex: link.Attrs().Index,
 			Dst:       dst,
@@ -855,17 +855,17 @@ func GetRouteMultiPathObject(ipaddr string,outPath []OutInfo,tableID int) (*NT.R
 			// Type:      unix.RTN_UNICAST,
 			// Tos:       14,
 		}
-		log.Debugf("--- route: %v",route)
+		//log.Debugf("--- route: %v",route)
 		return route,nil 
 	}else if length == 1{
 		gw := net.ParseIP(outPath[0].OutAddr)
 		link,err := GetLinkDevice(outPath[0].DevName)
 		if err != nil {
 			txt := fmt.Sprintf("error get device link:%v failed:%v!!!",outPath[0].DevName,err)
-			log.Errorf(txt)
+			//log.Errorf(txt)
 			return nil,errors.New(txt)
 		}
-		log.Debugf("gw ip=%v",gw)
+		//log.Debugf("gw ip=%v",gw)
 		route := &NT.Route{
 			LinkIndex: link.Attrs().Index,
 			Dst:       dst,
@@ -877,11 +877,11 @@ func GetRouteMultiPathObject(ipaddr string,outPath []OutInfo,tableID int) (*NT.R
 			// Type:      unix.RTN_UNICAST,
 			// Tos:       14,
 		}
-		log.Debugf("--- route: %v",route)
+		//log.Debugf("--- route: %v",route)
 		return route,nil 
 	}
 	txt := fmt.Sprintf("check IP valid err:%v",err)
-	log.Errorf(txt)
+	//log.Errorf(txt)
 	return nil,errors.New(txt)
 }
 
@@ -901,23 +901,23 @@ func NetReplaceRoutePatch(dstRoutes []string,outData []OutInfo,tableID int) erro
 		_, dst, err := net.ParseCIDR(ipAddr)
 		if err != nil {
 			txt := fmt.Sprintf("check IP valid err:%v",err)
-			log.Errorf(txt)
+			//log.Errorf(txt)
 			continue
 		}
 		route.Dst = dst
 		if err != nil {
-			log.Errorf("get route from ipAddr:%s error!!",ipAddr)
+			//log.Errorf("get route from ipAddr:%s error!!",ipAddr)
 			continue
 		}
-		log.Debugf("---repalce route: %v",route)
+		//log.Debugf("---repalce route: %v",route)
 		if err := NT.RouteReplace(route); err != nil {
 			txt := fmt.Sprintf("add route error:%v",err)
-			log.Errorf(txt)
+			//log.Errorf(txt)
 			return errors.New(txt)
 		}
 		total++
 	}
-	log.Infof("add route total:%v!",total)
+	//log.Infof("add route total:%v!",total)
 	return nil
 }
 
@@ -956,7 +956,7 @@ func NetGetRuleObject(data NetRule) *NT.Rule {
 func GetTableIDFromName(name string) int {
 	tables,err := files.ReadFileAll("/etc/iproute2/rt_tables")
 	if err != nil {
-		log.Errorf("read routes get failed: %v",err)
+		//log.Errorf("read routes get failed: %v",err)
 		return -1
 	}
 	tablesLine := strings.Split(tables,"\n")
@@ -964,19 +964,19 @@ func GetTableIDFromName(name string) int {
 		if value == "" || ([]byte(value))[0] == '#' {
 			continue
 		}
-		log.Infof("get tables: %v",value)
+		//log.Infof("get tables: %v",value)
 		for index,v := range []byte(value) {
-			log.Debugf("=====index:%d,%c!",index,v)
+			//log.Debugf("=====index:%d,%c!",index,v)
 		}
 		if strings.Index(value,name) > 0 {
 			// 尝试 水平定位符号 分割
 			data := []string{}
 			data = strings.Split(value,"	")
 			if len(data) != 2{
-				// log.Errorf("tables route first error: %v,len=%v",data,len(data))
+				// //log.Errorf("tables route first error: %v,len=%v",data,len(data))
 				data = strings.Split(value," ")
 				if len(data) != 2{
-					log.Errorf("tables route error: %v,len=%v",data,len(data))
+					//log.Errorf("tables route error: %v,len=%v",data,len(data))
 					continue
 				}
 			}
@@ -1006,7 +1006,7 @@ func NetGetRuleObjectList(dstRule []NetRule) []*NT.Rule {
 		ruleList = append(ruleList,rule)
 	}
 	// for i := range ruleList {
-	// 	log.Infof("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
+	// 	//log.Infof("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
 	// 	i,ruleList[i].Table,ruleList[i].Src,ruleList[i].Dst,ruleList[i].OifName,ruleList[i].Priority,
 	// 	ruleList[i].IifName,ruleList[i].Invert,ruleList[i].Mark,ruleList[i].Goto,ruleList[i].Mask,ruleList[i])
 	// }
@@ -1017,17 +1017,17 @@ func NetGetRuleObjectList(dstRule []NetRule) []*NT.Rule {
 func NetAddorDelRule(action string,rule *NT.Rule) error {
 	if rule == nil {
 		txt := "NetAddorDelRule rule is nil"
-		log.Errorf(txt)
+		//log.Errorf(txt)
 		return errors.New(txt)
 	}
 	if action == "add" {
 		if err := NT.RuleAdd(rule); err != nil {
-			log.Errorf("NetAddorDelRule add rule error: %v",err)
+			//log.Errorf("NetAddorDelRule add rule error: %v",err)
 			return err
 		}
 	}else {
 		if err := NT.RuleDel(rule); err != nil {
-			log.Errorf("NetAddorDelRule del rule error: %v",err)
+			//log.Errorf("NetAddorDelRule del rule error: %v",err)
 			return err
 		}
 	}
@@ -1049,37 +1049,37 @@ func IpNetEqual(ipn1 *net.IPNet, ipn2 *net.IPNet) bool {
 func IsEqualRule(value *NT.Rule,rule *NT.Rule) bool {
 	flag := false
 	// if value.SuppressIfgroup != rule.SuppressIfgroup {
-	// 	log.Infof("SuppressIfgroup not equal: %v,%v",value.SuppressIfgroup,rule.SuppressIfgroup)
+	// 	//log.Infof("SuppressIfgroup not equal: %v,%v",value.SuppressIfgroup,rule.SuppressIfgroup)
 	// 	return false
 	// }
 	// if value.SuppressPrefixlen != rule.SuppressPrefixlen {
-	// 	log.Infof("SuppressPrefixlen not equal: %v,%v",value.SuppressPrefixlen,rule.SuppressPrefixlen)
+	// 	//log.Infof("SuppressPrefixlen not equal: %v,%v",value.SuppressPrefixlen,rule.SuppressPrefixlen)
 	// 	return false
 	// }
 	// if value.Family != rule.Family {
-	// 	log.Infof("Family not equal: %v,%v",value.Family,rule.Family)
+	// 	//log.Infof("Family not equal: %v,%v",value.Family,rule.Family)
 	// 	return false
 	// }
 	// if value.TunID != rule.TunID {
-	// 	log.Infof("TunID not equal: %v,%v",value.TunID,rule.TunID)
+	// 	//log.Infof("TunID not equal: %v,%v",value.TunID,rule.TunID)
 	// 	return false
 	// }
 
 	// if value.Flow != rule.Flow {
-	// 	log.Infof("Flow not equal: %v,%v",value.Flow,rule.Flow)
+	// 	//log.Infof("Flow not equal: %v,%v",value.Flow,rule.Flow)
 	// 	return false
 	// }
 	// if !IpNetEqual(value.Src,rule.Src) || !IpNetEqual(value.Dst,rule.Dst) {
-	// 	log.Infof("IpNetEqual not equal:")
+	// 	//log.Infof("IpNetEqual not equal:")
 	// 	return false
 	// }
 	// if value.Mark != rule.Mark {
-	// 	log.Infof("Mark not equal: %v,%v",value.Mark,rule.Mark)
+	// 	//log.Infof("Mark not equal: %v,%v",value.Mark,rule.Mark)
 	// 	return false
 	// }
 	// amd64 !=
 	// if value.Mask != rule.Mask {
-	// 	log.Infof("Mask not equal: %v,%v",value.Mask,rule.Mask)
+	// 	//log.Infof("Mask not equal: %v,%v",value.Mask,rule.Mask)
 	// 	return false
 	// }
 
@@ -1100,7 +1100,7 @@ func IsEqualRule(value *NT.Rule,rule *NT.Rule) bool {
 		// value.Mask == rule.Mask &&
 		value.Invert == rule.Invert {
 		flag = true
-		log.Debugf("find rule: %v",rule)
+		//log.Debugf("find rule: %v",rule)
 	}
 
 	return flag
@@ -1111,19 +1111,19 @@ func NetVerifyExistRuleList(dstRules []*NT.Rule) error {
 	// 
 	rules, err := NT.RuleList(unix.AF_INET)
 	if err != nil {
-		log.Errorf("ListAllRule error:%v",err)
+		//log.Errorf("ListAllRule error:%v",err)
 		return err
 	}
-	log.Infof("dstRules:%v!",dstRules)
-	log.Infof("---list len=%d!",len(rules))
+	//log.Infof("dstRules:%v!",dstRules)
+	//log.Infof("---list len=%d!",len(rules))
 	// find this rule
 	for i,value := range rules {
-		log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
-		i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
-		value.IifName,value.Invert,value.Mark,value.Goto,value.Mask,value)
+		//log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
+		// i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
+		// value.IifName,value.Invert,value.Mark,value.Goto,value.Mask,value)
 		for index,rule := range dstRules{
 			if IsEqualRule(&value,rule) {
-				log.Infof("find rule: %v",rule)
+				//log.Infof("find rule: %v",rule)
 				dstRules = append(dstRules[:index],dstRules[index+1:]...)
 				break
 			}
@@ -1131,11 +1131,11 @@ func NetVerifyExistRuleList(dstRules []*NT.Rule) error {
 	}
 	total := 0
 	for _,rule := range dstRules{
-		log.Infof("need add rule :%v",rule)
+		//log.Infof("need add rule :%v",rule)
 		NetAddorDelRule("add",rule)
 		total++
 	}
-	log.Infof("add rule total: %v",total)
+	//log.Infof("add rule total: %v",total)
 	return nil 
 }
 
@@ -1144,21 +1144,21 @@ func NetVerifyNotExistRuleList(dstRules []*NT.Rule) error {
 	// 
 	rules, err := NT.RuleList(unix.AF_INET)
 	if err != nil {
-		log.Errorf("ListAllRule error:%v",err)
+		//log.Errorf("ListAllRule error:%v",err)
 		return err
 	}
-	log.Infof("---list len=%d, dstrule len=%d!",len(rules),len(dstRules))
+	//log.Infof("---list len=%d, dstrule len=%d!",len(rules),len(dstRules))
 	// find this rule
 	total := 0
 	for i,value := range rules {
-		log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v! rule:%v!",
-		i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
-		value.IifName,value.Invert,value.Mark,value.Goto,value)
+		//log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v! rule:%v!",
+		// i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
+		// value.IifName,value.Invert,value.Mark,value.Goto,value)
 		find := false
 		for _,rule := range dstRules{
 			if IsEqualRule(&value,rule) {
 				find = true
-				log.Infof("find rule: %v",rule)
+				//log.Infof("find rule: %v",rule)
 				// dstRules = append(dstRules[:index],dstRules[index+1:]...)
 				// 匹配多条
 				break
@@ -1167,11 +1167,11 @@ func NetVerifyNotExistRuleList(dstRules []*NT.Rule) error {
 		if find {
 			// delete 
 			total++
-			log.Infof("need del rule :%v",value)
+			//log.Infof("need del rule :%v",value)
 			NetAddorDelRule("del",&value)
 		}
 	}
-	log.Infof("delete rule total: %v",total)
+	//log.Infof("delete rule total: %v",total)
 	return nil
 }
 
@@ -1180,21 +1180,21 @@ func NetSyncPriorityRuleList(priority int,dstRules []*NT.Rule) error {
 	// 
 	rules, err := NT.RuleList(unix.AF_INET)
 	if err != nil {
-		log.Errorf("ListAllRule error:%v",err)
+		//log.Errorf("ListAllRule error:%v",err)
 		return err
 	}
-	log.Infof("---list len=%d, dstrule len=%d!",len(rules),len(dstRules))
+	//log.Infof("---list len=%d, dstrule len=%d!",len(rules),len(dstRules))
 	// find this rule
 	total := 0
 	for i,value := range rules {
-		log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v! rule:%v!",
-		i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
-		value.IifName,value.Invert,value.Mark,value.Goto,value)
+		//log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v! rule:%v!",
+		// i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
+		// value.IifName,value.Invert,value.Mark,value.Goto,value)
 		find := false
 		for index,rule := range dstRules{
 			if IsEqualRule(&value,rule) {
 				find = true
-				log.Infof("find rule: %v",rule)
+				//log.Infof("find rule: %v",rule)
 				dstRules = append(dstRules[:index],dstRules[index+1:]...)
 				break
 			}
@@ -1202,34 +1202,34 @@ func NetSyncPriorityRuleList(priority int,dstRules []*NT.Rule) error {
 		if priority == value.Priority && !find {
 			// delete 
 			total++
-			log.Infof("need del rule :%v",value)
+			//log.Infof("need del rule :%v",value)
 			NetAddorDelRule("del",&value)
 		}
 	}
-	log.Infof("delete rule total: %v",total)
+	//log.Infof("delete rule total: %v",total)
 	total = 0
 	for _,rule := range dstRules{
-		log.Infof("need add rule :%v",rule)
+		//log.Infof("need add rule :%v",rule)
 		NetAddorDelRule("add",rule)
 		total++
 	}
-	log.Infof("add rule total: %v",total)
+	//log.Infof("add rule total: %v",total)
 	return nil
 }
 
 func ListAllRule() {
 	rules, err := NT.RuleList(unix.AF_INET)
 	if err != nil {
-		log.Errorf("ListAllRule error:%v",err)
+		//log.Errorf("ListAllRule error:%v",err)
 		return
 	}
-	log.Infof("---list rule len=%d!",len(rules))
+	//log.Infof("---list rule len=%d!",len(rules))
 	// find this rule
-	for i := range rules {
-		log.Infof("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask:%v! rule:%v!",
-		i,rules[i].Table,rules[i].Src,rules[i].Dst,rules[i].OifName,rules[i].Priority,
-		rules[i].IifName,rules[i].Invert,rules[i].Mark,rules[i].Goto,rules[i].Mask,rules[i])
-	}
+	// for i := range rules {
+		//log.Infof("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask:%v! rule:%v!",
+		// i,rules[i].Table,rules[i].Src,rules[i].Dst,rules[i].OifName,rules[i].Priority,
+		// rules[i].IifName,rules[i].Invert,rules[i].Mark,rules[i].Goto,rules[i].Mask,rules[i])
+	// }
 }
 
 // UpdateRouteTable 包含创建，删除，更新路由表，"add","del", add 是 tableid 不一致则更新最新的ID
@@ -1238,12 +1238,12 @@ func UpdateRouteTable(action string,tableName string, tableID int) error {
 	const TABLE_FILE = "/etc/iproute2/rt_tables"
 	tables,err := files.ReadFileAll(TABLE_FILE)
 	if err != nil {
-		log.Errorf("read routes get failed: %v",err)
+		//log.Errorf("read routes get failed: %v",err)
 		return err
 	}
 	tablesLine := strings.Split(tables,"\n")
 	flag := false
-	log.Infof("before update tablesLine:%v,len=%d",tablesLine,len(tablesLine))
+	//log.Infof("before update tablesLine:%v,len=%d",tablesLine,len(tablesLine))
 	length := len(tablesLine)
 	if tablesLine[length-1] == "" {
 		tablesLine = tablesLine[:length-1]
@@ -1252,19 +1252,19 @@ func UpdateRouteTable(action string,tableName string, tableID int) error {
 		if value == "" || ([]byte(value))[0] == '#' {
 			continue
 		}
-		log.Infof("get tables: %v",value)
-		for index,v := range []byte(value) {
-			log.Debugf("=====index:%d,%c!",index,v)
-		}
+		//log.Infof("get tables: %v",value)
+		// for index,v := range []byte(value) {
+			//log.Debugf("=====index:%d,%c!",index,v)
+		// }
 		if strings.Index(value,tableName) > 0 {
 			// 尝试 水平定位符号 分割
 			data := []string{}
 			data = strings.Split(value,"	")
 			if len(data) != 2{
-				// log.Errorf("tables route first error: %v,len=%v",data,len(data))
+				// //log.Errorf("tables route first error: %v,len=%v",data,len(data))
 				data = strings.Split(value," ")
 				if len(data) != 2{
-					log.Errorf("tables route error: %v,len=%v",data,len(data))
+					//log.Errorf("tables route error: %v,len=%v",data,len(data))
 					continue
 				}
 			}
@@ -1286,13 +1286,13 @@ func UpdateRouteTable(action string,tableName string, tableID int) error {
 		}
 
 	}
-	log.Infof("after update tablesLine:%v,len=%d",tablesLine,len(tablesLine))
+	//log.Infof("after update tablesLine:%v,len=%d",tablesLine,len(tablesLine))
 	if action == "add" && !flag {
 		// 增加
 		txt := fmt.Sprintf("%d %s",tableID,tableName)
 		tablesLine = append(tablesLine,txt)
 	}
-	log.Infof("after over tablesLine:%v,len=%d",tablesLine,len(tablesLine))
+	//log.Infof("after over tablesLine:%v,len=%d",tablesLine,len(tablesLine))
 
 	// 重新写入
 	err = files.WriteListLineToFile(TABLE_FILE,tablesLine)	

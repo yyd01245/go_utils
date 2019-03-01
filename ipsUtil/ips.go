@@ -33,12 +33,12 @@ func GetMacAddrs(ifname string) string {
 func CheckIPValid(ipAddr string) bool {
 	ip := net.ParseIP(ipAddr)
 	if ip == nil {
-		log.Errorf("wrong ipAddr format")
+		// log.Errorf("wrong ipAddr format")
 		return false
 	}
 	ip = ip.To4()
 	if ip == nil {
-		log.Errorf("wrong ipAddr to To4 format")
+		// log.Errorf("wrong ipAddr to To4 format")
 		return false
 	}
 	return true
@@ -48,7 +48,7 @@ func CheckIPValid(ipAddr string) bool {
 // ipaddr 带掩码 192.168.0.0/24
 func CheckPrivateIPValid(ipaddr string) bool {
 	ret := false
-	log.Debugf("check ip valid: %v",ipaddr)
+	// log.Debugf("check ip valid: %v",ipaddr)
 	ip, _, err := net.ParseCIDR(ipaddr)
 	if err != nil {
 		log.Errorf("check IP valid err:%v",err)
@@ -82,7 +82,7 @@ func FindIfnameByAddresses(ipAddr string) (string,error) {
 
 		ipInput := net.ParseIP(ipAddr)
 		for _, a := range addrs {
-			log.Debugf("%v -- %v\n", ifi.Name, a)
+			// log.Debugf("%v -- %v\n", ifi.Name, a)
 			ip, ipNet, err := net.ParseCIDR(a.String())
 			if err != nil {
 				// log.Errorf("check IP valid err:%v",err)
@@ -94,7 +94,7 @@ func FindIfnameByAddresses(ipAddr string) (string,error) {
 			}
 			if ipNet.Contains(ipInput) {
 				result = ifi.Name
-				log.Debugf("get ip:%v, ifname:%v",ipAddr,ifi.Name)
+				// log.Debugf("get ip:%v, ifname:%v",ipAddr,ifi.Name)
 			}
 		}
 		// fmt.Printf("%v\n", ifi)
@@ -113,12 +113,12 @@ func FindIfnameExclude(Ifname string) ([]string,error) {
 	for _, ifi := range ifaces {
 		addrs, err := ifi.Addrs()
 		if err != nil {
-			log.Warnf("localAddresses: %v\n", err.Error())
+			// log.Warnf("localAddresses: %v\n", err.Error())
 			continue
 		}
 
 		for _, a := range addrs {
-			log.Debugf("%v -- %v\n", ifi.Name, a)
+			// log.Debugf("%v -- %v\n", ifi.Name, a)
 			ip, _, err := net.ParseCIDR(a.String())
 			if err != nil {
 				// log.Errorf("check IP valid err:%v",err)
@@ -147,12 +147,12 @@ func GetMacAddressByIP(ip string,dhcpFile string) (string,error) {
 	if err != nil {
 		return macAddr,err
 	}
-	log.Debugf("read dhcp file %v",output)
+	// log.Debugf("read dhcp file %v",output)
 	outputLine := strings.Split(output,"\n")
 	for _,value := range outputLine {
 		if strings.Index(value,ip) >= 0 {
 			// find
-			log.Debugf("find mac addr in dhcp file :%v",value)
+			// log.Debugf("find mac addr in dhcp file :%v",value)
 			data := strings.Split(value," ")
 			macAddr = data[1]
 			break;
@@ -170,12 +170,12 @@ func GetIPByMacAddress(macAddr string,dhcpFile string) (string,error) {
 	if err != nil {
 		return ip,err
 	}
-	log.Debugf("read dhcp file %v",output)
+	// log.Debugf("read dhcp file %v",output)
 	outputLine := strings.Split(output,"\n")
 	for _,value := range outputLine {
 		if strings.Index(value,macAddr) >= 0 {
 			// find
-			log.Debugf("find mac addr in dhcp file :%v",value)
+			// log.Debugf("find mac addr in dhcp file :%v",value)
 			data := strings.Split(value," ")
 			ip = data[2]
 			break;

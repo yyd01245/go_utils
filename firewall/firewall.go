@@ -5,7 +5,7 @@ import (
 	"strings"
 	// "fmt"
 	// "reflect"
-	log "github.com/Sirupsen/logrus"	
+	// log "github.com/Sirupsen/logrus"	
 	GPT "github.com/coreos/go-iptables/iptables"
 )
 
@@ -23,13 +23,14 @@ func AddGroupChain(chain string,rule []string) error {
 	ipt, err := GPT.New()
 	if err != nil {
 		// panic(fmt.Sprintf("New failed: %v", err))
-		log.Warnf("error create ipt instance:%v ",err)
+		// log.Warnf("error create ipt instance:%v ",err)
 		return err
 	}
 
 	err = ipt.Append(FIREWALLTABLE,FIREWALLCHAIN, rule...)
 	if err != nil {
-		log.Warnf("Append failed: %v", err)
+		// log.Warnf("Append failed: %v", err)
+		return err
 	}
 
 	return nil
@@ -39,21 +40,21 @@ func ClearGroupChain(chain string) error {
 	ipt, err := GPT.New()
 	if err != nil {
 		// panic(fmt.Sprintf("New failed: %v", err))
-		log.Warnf("error create ipt instance:%v ",err)
+		// log.Warnf("error create ipt instance:%v ",err)
 		return err
 	}
 
 	// check is exist
 	rules, err := ipt.List(FIREWALLTABLE,FIREWALLCHAIN)
 	if err != nil {
-		log.Warnf("List failed: %v", err)
+		// log.Warnf("List failed: %v", err)
 		return err
 	}
 
 	expected := false
 	for _,value := range rules {
 		if value == ("-N " + FIREWALLCHAIN) {
-			log.Debugf("exist chain, match over")
+			// log.Debugf("exist chain, match over")
 			expected = true
 			break;
 		}
@@ -65,13 +66,13 @@ func ClearGroupChain(chain string) error {
 		// chain shouldn't exist
 		err = ipt.NewChain(FIREWALLTABLE, FIREWALLCHAIN)
 		if err != nil {
-			log.Warnf("new chain error: %v",err)
+			// log.Warnf("new chain error: %v",err)
 			return err
 		}	
-		log.Debugf("NewChain success")	
+		// log.Debugf("NewChain success")	
 		err = ipt.Append(FIREWALLTABLE, "FORWARD",  "-j",FIREWALLCHAIN )
 		if err != nil {
-			log.Warnf("append chain failed: %v", err)
+			// log.Warnf("append chain failed: %v", err)
 			return err
 		}	
 		// iptables -t filter -A FORWARD -j $USER_CHAIN	
@@ -86,7 +87,7 @@ func ClearChain(chainTable string,chain string) error{
 	ipt, err := GPT.New()
 	if err != nil {
 		// panic(fmt.Sprintf("New failed: %v", err))
-		log.Warnf("error create ipt instance:%v ",err)
+		// log.Warnf("error create ipt instance:%v ",err)
 		return err
 	}
 	ipt.ClearChain(chainTable,chain)
@@ -97,13 +98,14 @@ func AddChain(chainTable string,chain string, rule []string) error{
 	ipt, err := GPT.New()
 	if err != nil {
 		// panic(fmt.Sprintf("New failed: %v", err))
-		log.Warnf("error create ipt instance:%v ",err)
+		// log.Warnf("error create ipt instance:%v ",err)
 		return err
 	}
 
 	err = ipt.Append(chainTable,chain, rule...)
 	if err != nil {
-		log.Warnf("Append failed: %v", err)
+		// log.Warnf("Append failed: %v", err)
+		return err
 	}
 
 	return nil
@@ -113,13 +115,14 @@ func DeleteChain(chainTable string,chain string, rule []string) error{
 	ipt, err := GPT.New()
 	if err != nil {
 		// panic(fmt.Sprintf("New failed: %v", err))
-		log.Warnf("error create ipt instance:%v ",err)
+		// log.Warnf("error create ipt instance:%v ",err)
 		return err
 	}
 
 	err = ipt.Delete(chainTable,chain, rule...)
 	if err != nil {
-		log.Warnf("Delete failed: %v", err)
+		// log.Warnf("Delete failed: %v", err)
+		return err
 	}
 
 	return nil
@@ -130,19 +133,19 @@ func ListChain(chainTable string,chain string, rule string) (bool,error){
 	ret := false
 	if err != nil {
 		// panic(fmt.Sprintf("New failed: %v", err))
-		log.Warnf("error create ipt instance:%v ",err)
+		// log.Warnf("error create ipt instance:%v ",err)
 		return ret,err
 	}
 	// check list
 	rules, err := ipt.List(chainTable,chain)
 	if err != nil {
-		log.Warnf("List failed: %v", err)
+		// log.Warnf("List failed: %v", err)
 		return ret,err
 	}
 
 	for _,value := range rules {
 		if strings.Index(value,rule) >= 0 {
-			log.Debugf("exist chain, match over")
+			// log.Debugf("exist chain, match over")
 			ret = true
 			break;
 		}
@@ -155,13 +158,13 @@ func ListChainAll(chainTable string,chain string) ([]string,error){
 
 	if err != nil {
 		// panic(fmt.Sprintf("New failed: %v", err))
-		log.Warnf("error create ipt instance:%v ",err)
+		// log.Warnf("error create ipt instance:%v ",err)
 		return []string{},err
 	}
 	// check list
 	rules, err := ipt.List(chainTable,chain)
 	if err != nil {
-		log.Warnf("List failed: %v", err)
+		// log.Warnf("List failed: %v", err)
 		return rules,err
 	}
 
@@ -172,13 +175,14 @@ func DeleteChainbyString(chainTable string,chain string, rule string) error{
 	ipt, err := GPT.New()
 	if err != nil {
 		// panic(fmt.Sprintf("New failed: %v", err))
-		log.Warnf("error create ipt instance:%v ",err)
+		// log.Warnf("error create ipt instance:%v ",err)
 		return err
 	}
 
 	err = ipt.Delete(chainTable,chain, rule)
 	if err != nil {
-		log.Warnf("Delete failed: %v", err)
+		// log.Warnf("Delete failed: %v", err)
+		return err
 	}
 
 	return nil

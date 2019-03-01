@@ -22,7 +22,7 @@ func reader(r io.Reader) string{
 		if err != nil {
 			return data
 		}
-		log.Debugf("Client got:%v", string(buf[0:n]))
+		// log.Debugf("Client got:%v", string(buf[0:n]))
 		data = data + string(buf[0:n])
 	// }
 	return data
@@ -31,7 +31,7 @@ func reader(r io.Reader) string{
 func writer(c io.Writer, msg string) error {
 	_,err := c.Write([]byte(msg))
 	if err != nil {
-		log.Errorf("write error:%v",err)
+		// log.Errorf("write error:%v",err)
 		return err
 	}
 
@@ -60,7 +60,7 @@ func (this *IPCClient) Close() {
 
 
 func (this *IPCClient)CreateClient() error {
-	log.Debugf("create client begin!")
+	// log.Debugf("create client begin!")
 	// ln,err := net.Dial("unix",this.sockFile)
 	timeout := time.Duration(5 * time.Second)
 	ln,err := net.DialTimeout("unix",this.sockFile,timeout)

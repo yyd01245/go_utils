@@ -29,7 +29,7 @@ func echoServer(this *IPCServer, c net.Conn) {
 			return
 		}
 		data := string(buf[0:nr])
-		log.Debugf("Server got:", data)
+		// log.Debugf("Server got:", data)
 
 		msg := this.Call(data)
 		_, err = c.Write([]byte(msg))
@@ -68,7 +68,7 @@ func (this *IPCServer)Close() error {
 }
 
 func (this *IPCServer)CreateServer() error {
-	log.Debugf("create begin!")
+	// log.Debugf("create begin!")
 	ln,err := net.Listen("unix",this.sockFile)
 	if err != nil {
 		log.Fatalf("Listen error:%v",err)

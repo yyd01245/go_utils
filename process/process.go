@@ -9,10 +9,10 @@ import(
 func FindProcess(pid int) error{
 	err := syscall.Kill(pid, 0);
 	if err == nil {
-		log.Debugf("find process success ")
+		// log.Debugf("find process success ")
 
 	}else {
-		log.Infof("Failed to find process: %v\n", err)
+		// log.Infof("Failed to find process: %v\n", err)
 		return err	
 	}
 	return nil
@@ -21,9 +21,9 @@ func FindProcess(pid int) error{
 func KillProcess(pid int) error {
 	err := syscall.Kill(pid, 9);
 	if err == nil {
-		log.Debugf("kill process success ")
+		// log.Debugf("kill process success ")
 	}else {
-		log.Warnf("Failed to kill process: %v\n", err)
+		// log.Warnf("Failed to kill process: %v\n", err)
 		return err
 	}
 	return nil
