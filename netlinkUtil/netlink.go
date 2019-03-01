@@ -1186,7 +1186,7 @@ func NetSyncPriorityRuleList(priority int,dstRules []*NT.Rule) error {
 	//log.Infof("---list len=%d, dstrule len=%d!",len(rules),len(dstRules))
 	// find this rule
 	total := 0
-	for i,value := range rules {
+	for _,value := range rules {
 		//log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v! rule:%v!",
 		// i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
 		// value.IifName,value.Invert,value.Mark,value.Goto,value)
@@ -1225,11 +1225,11 @@ func ListAllRule() {
 	}
 	//log.Infof("---list rule len=%d!",len(rules))
 	// find this rule
-	// for i := range rules {
-		//log.Infof("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask:%v! rule:%v!",
-		// i,rules[i].Table,rules[i].Src,rules[i].Dst,rules[i].OifName,rules[i].Priority,
-		// rules[i].IifName,rules[i].Invert,rules[i].Mark,rules[i].Goto,rules[i].Mask,rules[i])
-	// }
+	for i := range rules {
+		log.Infof("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask:%v! rule:%v!",
+		i,rules[i].Table,rules[i].Src,rules[i].Dst,rules[i].OifName,rules[i].Priority,
+		rules[i].IifName,rules[i].Invert,rules[i].Mark,rules[i].Goto,rules[i].Mask,rules[i])
+	}
 }
 
 // UpdateRouteTable 包含创建，删除，更新路由表，"add","del", add 是 tableid 不一致则更新最新的ID
