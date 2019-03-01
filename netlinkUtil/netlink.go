@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 	"errors"
-	log "github.com/Sirupsen/logrus"	
+	// log "github.com/Sirupsen/logrus"	
 	NT "github.com/vishvananda/netlink"
 	// "github.com/vishvananda/netlink/nl"
 	// "reflect"
