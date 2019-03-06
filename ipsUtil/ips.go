@@ -33,12 +33,12 @@ func GetMacAddrs(ifname string) string {
 func CheckIPValid(ipAddr string) bool {
 	ip := net.ParseIP(ipAddr)
 	if ip == nil {
-		log.Errorf("wrong ipAddr format")
+		// log.Errorf("wrong ipAddr format")
 		return false
 	}
 	ip = ip.To4()
 	if ip == nil {
-		log.Errorf("wrong ipAddr to To4 format")
+		// log.Errorf("wrong ipAddr to To4 format")
 		return false
 	}
 	return true
@@ -51,7 +51,7 @@ func CheckPrivateIPValid(ipaddr string) bool {
 	log.Debugf("check ip valid: %v",ipaddr)
 	ip, _, err := net.ParseCIDR(ipaddr)
 	if err != nil {
-		log.Errorf("check IP valid err:%v",err)
+		// log.Errorf("check IP valid err:%v",err)
 		return ret
 	}
 	ipv4Value := ip.To4()
