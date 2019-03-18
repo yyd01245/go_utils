@@ -691,7 +691,7 @@ func NetVerifyRoutePatch(link NT.Link,dstRoutes []string,tableID int,scope int,g
 	return nil
 }
 
-// 批量删除路由，进行匹配保留项，排查 scope
+// 批量删除路由，不进行匹配保留项，排查 scope
 func NetDelRoutePatch(link NT.Link,dstRoutes []string,tableID int,scope int,gwIP string) error{
 	total := 0
 	gw := net.ParseIP(gwIP)
@@ -965,7 +965,7 @@ func GetTableIDFromName(name string) int {
 		if value == "" || ([]byte(value))[0] == '#' {
 			continue
 		}
-		log.Infof("get tables: %v",value)
+		log.Debugf("get tables: %v",value)
 		for index,v := range []byte(value) {
 			log.Debugf("=====index:%d,%c!",index,v)
 		}
@@ -1253,7 +1253,7 @@ func UpdateRouteTable(action string,tableName string, tableID int) error {
 		if value == "" || ([]byte(value))[0] == '#' {
 			continue
 		}
-		log.Infof("get tables: %v",value)
+		log.Debugf("get tables: %v",value)
 		for index,v := range []byte(value) {
 			log.Debugf("=====index:%d,%c!",index,v)
 		}
