@@ -11,8 +11,6 @@ import (
 	"strings"
 	"bytes"
 	"strconv"
-
-	"golang.org/x/sys/unix"
 	"github.com/yyd01245/go_utils/files"
 
 )
@@ -376,7 +374,7 @@ func DelTableIDFromName(name string,tableID int) error {
 		writeList = append(writeList,value)
 	}
 	log.Infof("--- get write table list: %v",writeList)
-	err = files.WriteStringToFile("/etc/iproute2/rt_tables",writeList)
+	err = files.WriteListLineToFile("/etc/iproute2/rt_tables",writeList)
 	if err != nil {
 		log.Errorf("error append to route table %v",err)
 		return err
