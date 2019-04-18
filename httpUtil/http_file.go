@@ -24,7 +24,7 @@ import (
 
 // DownloadFile will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
-func DownloadFile(filepath string, url string) error {
+func DownloadFile(filepath string, url string, downtime int) error {
 
 	// Create the file
 	out, err := os.Create(filepath)
@@ -33,7 +33,10 @@ func DownloadFile(filepath string, url string) error {
 			return err
 	}
 	defer out.Close()
-	timeout := time.Duration(10 * time.Second)
+	if downtime == 0 {
+		downtime = 10
+	}
+	timeout := time.Duration(downtime) * time.Second
 	client := http.Client{
 			Timeout: timeout,
 	}
