@@ -92,7 +92,7 @@ func LinkAddGreTun(ifName string,ipLocal string, ipRemote string) error{
 	return nil
 }
 
-// 查找对应的 gre 通道，没有则返回 "","" 完全
+// 查找对应的 gre 通道的 公网地址，没有则返回 "","" 
 func LinkListGreTun(ifName string,ipLocal string, ipRemote string) (string,string) {
 	// list link 
 	localIP := net.ParseIP(ipLocal);
@@ -466,5 +466,48 @@ func VerfiyLinkInfo(ifName string,ipLocal string,ipPeer string) error{
 
 	}
 	return res 
+
+}
+
+// 获取 gre 隧道的私有地址
+func GetLinkInfo(ifName string,ipLocal string,ipPeer string) (string,string) {
+	var link NT.Link
+
+	link, err := NT.LinkByName(ifName)
+	if err != nil {
+		log.Errorf("find link device:%v error: %v",ifName,err)
+		return "",""
+	}
+
+	local_ip, localNet, err := net.ParseCIDR(ipLocal)
+	if err != nil {
+		txt := fmt.Sprintf("check IP valid err:%v",err)
+		log.Errorf(txt)
+		return "",""
+	}
+	var address = &net.IPNet{IP: local_ip, Mask: localNet.Mask}
+	ipAddr, ipNet, err := net.ParseCIDR(ipPeer)
+	if err != nil {
+		txt := fmt.Sprintf("check IP valid err:%v",err)
+		log.Errorf(txt)
+		return "",""
+	}
+	var peer = &net.IPNet{IP: ipAddr, Mask: ipNet.Mask}
+	res := errors.New("find link addr err")
+	addrList,err := NT.AddrList(link,NT.FAMILY_V4)
+	log.Debugf("get addrList :%v",addrList)
+	var gre_local_ip net.IPNet;
+	var gre_remote_ip net.IPNet;
+	for _, addrData := range addrList {
+		log.Debugf("--- addr = %v",addrData)
+		if CompareIPNet(addrData.IPNet,address) &&
+			CompareIPNet(addrData.Peer,peer) {
+				// get 
+				return ipLocal,ipPeer
+			}
+			gre_local_ip = addrData.IPNet
+			gre_remote_ip = addrData.Peer
+	}
+	return gre_local_ip.String(),gre_remote_ip.String()
 
 }
