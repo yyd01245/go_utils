@@ -493,21 +493,28 @@ func GetLinkInfo(ifName string,ipLocal string,ipPeer string) (string,string) {
 		return "",""
 	}
 	var peer = &net.IPNet{IP: ipAddr, Mask: ipNet.Mask}
-	res := errors.New("find link addr err")
+	// res := errors.New("find link addr err")
 	addrList,err := NT.AddrList(link,NT.FAMILY_V4)
 	log.Debugf("get addrList :%v",addrList)
-	var gre_local_ip net.IPNet;
-	var gre_remote_ip net.IPNet;
+	var gre_local_ip *net.IPNet = nil;
+	var gre_remote_ip *net.IPNet = nil;
 	for _, addrData := range addrList {
 		log.Debugf("--- addr = %v",addrData)
 		if CompareIPNet(addrData.IPNet,address) &&
 			CompareIPNet(addrData.Peer,peer) {
 				// get 
-				return ipLocal,ipPeer
+				// return ipLocal,ipPeer
+				gre_local_ip = addrData.IPNet
+				gre_remote_ip = addrData.Peer
+				break;
 			}
 			gre_local_ip = addrData.IPNet
 			gre_remote_ip = addrData.Peer
 	}
-	return gre_local_ip.String(),gre_remote_ip.String()
+	if gre_local_ip != nil && gre_remote_ip != nil {
+		return gre_local_ip.IP.String(),gre_remote_ip.IP.String()
+	}
+
+	return "",""
 
 }
