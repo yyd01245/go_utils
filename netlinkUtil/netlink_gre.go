@@ -92,7 +92,8 @@ func LinkAddGreTun(ifName string,ipLocal string, ipRemote string) error{
 	return nil
 }
 
-func LinkListGreTun(ifName string,ipLocal string, ipRemote string) error{
+// 查找对应的 gre 通道，没有则返回 "","" 完全
+func LinkListGreTun(ifName string,ipLocal string, ipRemote string) (string,string) {
 	// list link 
 	localIP := net.ParseIP(ipLocal);
 	remoteIP := net.ParseIP(ipRemote);
@@ -100,7 +101,7 @@ func LinkListGreTun(ifName string,ipLocal string, ipRemote string) error{
 	links, err := NT.LinkList()
 	if err != nil {
 		log.Errorf("Link list error: %v",err)
-		return err
+		return "",""
 	}
 	// log.Infof("---links: %v",links)
 	for _, link := range links {
@@ -113,9 +114,11 @@ func LinkListGreTun(ifName string,ipLocal string, ipRemote string) error{
 				gretun.Remote.Equal(remoteIP) {
 				txt := fmt.Sprintf("find ifname same link:%v exsit",ifName)
 				log.Infof(txt)
+				return gretun.Local.String(),gretun.Remote.String()
 			}else if gretun.Attrs().Name == ifName {
 				// find same name 
 				log.Infof("find gretun same name ")
+				return gretun.Local.String(),gretun.Remote.String()
 			}
 		}
 
@@ -125,7 +128,7 @@ func LinkListGreTun(ifName string,ipLocal string, ipRemote string) error{
 	// 	Local:     localIP,
 	// 	Remote:    remoteIP,
 	// }
-	return nil
+	return "",""
 }
 
 func LinkDelGreTun(ifName string,ipLocal string, ipRemote string) error{
