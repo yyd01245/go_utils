@@ -109,6 +109,22 @@ func AddChain(chainTable string,chain string, rule []string) error{
 	return nil
 }
 
+func InsertChain(chainTable string,chain string, pos int, rule []string) error{
+	ipt, err := GPT.New()
+	if err != nil {
+		// panic(fmt.Sprintf("New failed: %v", err))
+		log.Warnf("error create ipt instance:%v ",err)
+		return err
+	}
+
+	err = ipt.Insert(chainTable,chain,pos,rule...)
+	if err != nil {
+		log.Warnf("Append failed: %v", err)
+	}
+
+	return nil
+}
+
 func DeleteChain(chainTable string,chain string, rule []string) error{
 	ipt, err := GPT.New()
 	if err != nil {

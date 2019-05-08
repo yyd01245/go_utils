@@ -275,6 +275,50 @@ func GreTunAddrAdd(ifName string,ipLocal string,ipPeer string) error {
 	return nil
 }
 
+// //ipLocal /32 ipPeer/32
+// func VlanAddrAdd(vlanID int,ifName string, ipLocal string,ipPeer string) error {
+
+// 	link, err := NT.LinkByName(ifName)
+// 	if err != nil {
+// 		log.Errorf("find link device:%v error: %v",ifName,err)
+// 		return errors.New("find link device error!")
+// 	}
+// 	// log.Infof("---links: %v",links)
+// 	// var link NT.Link
+// 	if vlan, ok := link.(*Vlan); ok {
+// 		if vlan.VlanId == vlanID {
+
+// 		}else {
+// 			log.Errorf("find link device:%v vlanid error: currentID=%v,needID=%v",ifName,vlan.VlanId,vlanID)
+// 			return errors.New("find link device vlanid error!")
+// 		}
+// 	}
+
+// 	local_ip, localNet, err := net.ParseCIDR(ipLocal)
+// 	if err != nil {
+// 		txt := fmt.Sprintf("check IP valid err:%v",err)
+// 		log.Errorf(txt)
+// 		return errors.New(txt)
+// 	}
+// 	var address = &net.IPNet{IP: local_ip, Mask: localNet.Mask}
+// 	ipAddr, ipNet, err := net.ParseCIDR(ipPeer)
+// 	if err != nil {
+// 		txt := fmt.Sprintf("check IP valid err:%v",err)
+// 		log.Errorf(txt)
+// 		return errors.New(txt)
+// 	}
+// 	var peer = &net.IPNet{IP: ipAddr, Mask: ipNet.Mask}
+
+// 	var addr = &NT.Addr{IPNet: address,Peer: peer,}
+
+// 	err = NT.AddrAdd(link, addr)
+// 	if err != nil {
+// 		log.Errorf("AddrAdd error: %v",err)
+// 		return err
+// 	}
+// 	return nil
+// }
+
 // func AddRouteForGre(ifname string, routes []string, gateway string) error{
 // 	link,err := GetLinkDevice(ifname)
 // 	if err != nil {

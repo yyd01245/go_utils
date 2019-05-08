@@ -554,6 +554,37 @@ func RemoveRepByMap(slc []string) []string {
 	return result
 }
 
+
+func ClearRoutePatch(link NT.Link,tableID int) error{
+	total := 0
+
+	// 不能删除 default 和 scope link 以及保留的地址
+	route := NT.Route{
+		LinkIndex: link.Attrs().Index,
+		Table:     tableID,
+	}
+
+	routes, err := NT.RouteListFiltered(NT.FAMILY_V4, &route, 
+			NT.RT_FILTER_TABLE|NT.RT_FILTER_OIF)
+	if err != nil {
+		txt := fmt.Sprintf("RouteListFiltered error:%v",err)
+		log.Errorf(txt)
+		return errors.New(txt)
+	}	
+	for _,R := range routes {
+		// log.Infof("delete route: %v!",R)
+		err = NetAddOrDelRouteByLink("del",&R)
+		if err != nil {
+			log.Errorf("add route:%v failed:%v!!",R,err)
+			continue
+		}
+		total++
+	}
+	log.Infof("ClearRoutePatch del route total:%v!",total)
+
+	return nil
+}
+
 func NetSyncRoutePatch(link NT.Link,data []string,tableID int,scope int,gwIP string) error{
 	total := 0
 	gw := net.ParseIP(gwIP)
@@ -989,6 +1020,71 @@ func GetTableIDFromName(name string) int {
 
 	}
 	return -1
+}
+
+func DeleteTableIDFromName(name string, tableID int) error {
+	tables,err := files.ReadFileAll("/etc/iproute2/rt_tables")
+	if err != nil {
+		log.Errorf("read routes get failed: %v",err)
+		return err
+	}
+	tablesLine := strings.Split(tables,"\n")
+	writeData := []string{}
+	needClear := false
+	for _,value := range tablesLine {
+		if value == "" {
+			continue
+		}
+		if ([]byte(value))[0] == '#' {
+			writeData = append(writeData,value)
+			continue
+		}
+		log.Debugf("get tables: %v",value)
+		for index,v := range []byte(value) {
+			log.Debugf("=====index:%d,%c!",index,v)
+		}
+		if strings.Index(value,name) >= 0 {
+			// 尝试 水平定位符号 分割
+			data := []string{}
+			data = strings.Split(value,"	")
+
+			if len(data) != 2{
+				// log.Errorf("tables route first error: %v,len=%v",data,len(data))
+				data = strings.Split(value," ")
+				if len(data) < 2{
+					log.Infof("delete tables route error: %v,len=%v",data,len(data))
+					writeData = append(writeData,value)
+					continue
+				}
+			}
+			if data[1] == name {
+				id, _ := strconv.Atoi(data[0])
+				if id == tableID {
+					needClear = true
+					log.Infof("find tablename=%v, id=%v",name, tableID)
+					continue;
+				}else {
+					log.Infof("find != tablename=%v, id=%v",name, id)
+				}
+			}
+		}
+		writeData = append(writeData,value)
+
+	}
+
+	if needClear {
+		writeString := strings.Join(writeData, "\n")
+		writeString = writeString+"\n"
+		log.Infof("need rewrite to file ")
+		err := files.WriteStringToFile("/etc/iproute2/rt_tables",writeString)	
+		if err != nil {
+			// return err
+			log.Errorf("write to upwan config error1!");
+			return err
+		}
+	}
+	return nil 
+	
 }
 
 func NetGetRuleObjectList(dstRule []NetRule) []*NT.Rule {
