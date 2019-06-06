@@ -275,49 +275,49 @@ func GreTunAddrAdd(ifName string,ipLocal string,ipPeer string) error {
 	return nil
 }
 
-// //ipLocal /32 ipPeer/32
-// func VlanAddrAdd(vlanID int,ifName string, ipLocal string,ipPeer string) error {
+//ipLocal /32 ipPeer/32
+func VlanAddrAdd(vlanID int,ifName string, ipLocal string,ipPeer string) error {
 
-// 	link, err := NT.LinkByName(ifName)
-// 	if err != nil {
-// 		log.Errorf("find link device:%v error: %v",ifName,err)
-// 		return errors.New("find link device error!")
-// 	}
-// 	// log.Infof("---links: %v",links)
-// 	// var link NT.Link
-// 	if vlan, ok := link.(*Vlan); ok {
-// 		if vlan.VlanId == vlanID {
+	link, err := NT.LinkByName(ifName)
+	if err != nil {
+		log.Errorf("find link device:%v error: %v",ifName,err)
+		return errors.New("find link device error!")
+	}
+	// log.Infof("---links: %v",links)
+	// var link NT.Link
+	if vlan, ok := link.(*NT.Vlan); ok {
+		if vlan.VlanId == vlanID {
 
-// 		}else {
-// 			log.Errorf("find link device:%v vlanid error: currentID=%v,needID=%v",ifName,vlan.VlanId,vlanID)
-// 			return errors.New("find link device vlanid error!")
-// 		}
-// 	}
+		}else {
+			log.Errorf("find link device:%v vlanid error: currentID=%v,needID=%v",ifName,vlan.VlanId,vlanID)
+			return errors.New("find link device vlanid error!")
+		}
+	}
 
-// 	local_ip, localNet, err := net.ParseCIDR(ipLocal)
-// 	if err != nil {
-// 		txt := fmt.Sprintf("check IP valid err:%v",err)
-// 		log.Errorf(txt)
-// 		return errors.New(txt)
-// 	}
-// 	var address = &net.IPNet{IP: local_ip, Mask: localNet.Mask}
-// 	ipAddr, ipNet, err := net.ParseCIDR(ipPeer)
-// 	if err != nil {
-// 		txt := fmt.Sprintf("check IP valid err:%v",err)
-// 		log.Errorf(txt)
-// 		return errors.New(txt)
-// 	}
-// 	var peer = &net.IPNet{IP: ipAddr, Mask: ipNet.Mask}
+	local_ip, localNet, err := net.ParseCIDR(ipLocal)
+	if err != nil {
+		txt := fmt.Sprintf("check IP valid err:%v",err)
+		log.Errorf(txt)
+		return errors.New(txt)
+	}
+	var address = &net.IPNet{IP: local_ip, Mask: localNet.Mask}
+	ipAddr, ipNet, err := net.ParseCIDR(ipPeer)
+	if err != nil {
+		txt := fmt.Sprintf("check IP valid err:%v",err)
+		log.Errorf(txt)
+		return errors.New(txt)
+	}
+	var peer = &net.IPNet{IP: ipAddr, Mask: ipNet.Mask}
 
-// 	var addr = &NT.Addr{IPNet: address,Peer: peer,}
+	var addr = &NT.Addr{IPNet: address,Peer: peer,}
 
-// 	err = NT.AddrAdd(link, addr)
-// 	if err != nil {
-// 		log.Errorf("AddrAdd error: %v",err)
-// 		return err
-// 	}
-// 	return nil
-// }
+	err = NT.AddrAdd(link, addr)
+	if err != nil {
+		log.Errorf("AddrAdd error: %v",err)
+		return err
+	}
+	return nil
+}
 
 // func AddRouteForGre(ifname string, routes []string, gateway string) error{
 // 	link,err := GetLinkDevice(ifname)
@@ -393,16 +393,28 @@ func DelTableIDFromName(name string,tableID int) error {
 			continue
 		}
 		log.Debugf("get tables: %v",value)
-		for index,v := range []byte(value) {
-			log.Debugf("=====index:%d,%c!",index,v)
-		}
+		// for index,v := range []byte(value) {
+		// 	log.Debugf("=====index:%d,%c!",index,v)
+		// }
 		if strings.Index(value,name) > 0 {
 			// 尝试 水平定位符号 分割
 			data := []string{}
 			data = strings.Split(value,"	")
+			length := len(data)
+			log.Errorf("tables route : %v,len=%v",data,length)
+			if data[length-1] == "" || strings.Index(data[length-1]," ") >= 0 {
+				// data = data[:length-1]
+				data[length-1] = strings.Replace(data[length-1]," ","",-1)
+				log.Debugf("---- last data is space, ignor,after:%v,len=%d",data,length)
+			}
 			if len(data) != 2{
-				// log.Errorf("tables route first error: %v,len=%v",data,len(data))
+				log.Debugf("tables route first error: %v,len=%v",data,len(data))
 				data = strings.Split(value," ")
+				length := len(data)
+				if data[length-1] == "" || strings.Index(data[length-1]," ") >= 0 {
+					data = data[:length-1]
+					log.Debugf("---- last data is space, ignor,after:%v,len=%d",data,length)
+				}
 				if len(data) != 2{
 					log.Errorf("tables route error: %v,len=%v",data,len(data))
 					writeList = append(writeList,value)

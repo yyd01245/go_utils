@@ -300,7 +300,7 @@ func NetAddOrDelRouteByLink(action string,route *NT.Route) error{
 	// // add a gateway route
 	if route == nil {
 		txt := fmt.Sprintf("add route error: route is nil")
-		log.Errorf(txt)
+		log.Warnf(txt)
 		return errors.New(txt)
 	}
 	if action == ADDROUTE {
@@ -328,7 +328,7 @@ func NetAddOrDelRouteByLink(action string,route *NT.Route) error{
 		log.Debugf("---delete route: %v",route)
 		if err := NT.RouteDel(route); err != nil {
 			txt := fmt.Sprintf("add route error:%v",err)
-			log.Errorf(txt)
+			log.Warnf(txt)
 			return errors.New(txt)
 		}
 	}else {
@@ -351,7 +351,7 @@ func NetAddRoutePatch(link NT.Link,dstRoutes []string,outAddr string,tableID int
 		}
 		err = NetAddOrDelRouteByLink("add",route)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",route,err)
+			log.Warnf("add route:%v failed:%v!!",route,err)
 			continue
 		}
 		total++
@@ -416,7 +416,7 @@ func NetSyncSopeLinkRouteTable(link NT.Link,srcTableID int,dstTableID int) error
 		R.Table = dstTableID 
 		err = NetAddOrDelRouteByLink("add",&R)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",R,err)
+			log.Warnf("add route:%v failed:%v!!",R,err)
 			continue
 		}
 		total++
@@ -526,7 +526,7 @@ func NetVerfiyRouteTable(srcTableID int,dstTableID int) error{
 		R.Table = dstTableID 
 		err = NetAddOrDelRouteByLink("add",&R)
 		if err != nil {
-			log.Errorf("add route:%v failed:%v!!",R,err)
+			log.Warnf("add route:%v failed:%v!!",R,err)
 			continue
 		}
 		total++
@@ -944,7 +944,7 @@ func NetReplaceRoutePatch(dstRoutes []string,outData []OutInfo,tableID int) erro
 		log.Debugf("---repalce route: %v",route)
 		if err := NT.RouteReplace(route); err != nil {
 			txt := fmt.Sprintf("add route error:%v",err)
-			log.Errorf(txt)
+			// log.Errorf(txt)
 			return errors.New(txt)
 		}
 		total++
@@ -997,16 +997,28 @@ func GetTableIDFromName(name string) int {
 			continue
 		}
 		log.Debugf("get tables: %v",value)
-		for index,v := range []byte(value) {
-			log.Debugf("=====index:%d,%c!",index,v)
-		}
+		// for index,v := range []byte(value) {
+		// 	log.Debugf("=====index:%d,%c!",index,v)
+		// }
 		if strings.Index(value,name) > 0 {
 			// 尝试 水平定位符号 分割
 			data := []string{}
 			data = strings.Split(value,"	")
+			length := len(data)
+			log.Errorf("tables route : %v,len=%v",data,length)
+			if data[length-1] == "" || strings.Index(data[length-1]," ") >= 0 {
+				// data = data[:length-1]
+				data[length-1] = strings.Replace(data[length-1]," ","",-1)
+				log.Debugf("---- last data is space, ignor,after:%v,len=%d",data,length)
+			}
 			if len(data) != 2{
-				// log.Errorf("tables route first error: %v,len=%v",data,len(data))
+				log.Debugf("tables route first error: %v,len=%v",data,len(data))
 				data = strings.Split(value," ")
+				length := len(data)
+				if data[length-1] == "" || strings.Index(data[length-1]," ") >= 0 {
+					data = data[:length-1]
+					log.Debugf("---- last data is space, ignor,after:%v,len=%d",data,length)
+				}
 				if len(data) != 2{
 					log.Errorf("tables route error: %v,len=%v",data,len(data))
 					continue
@@ -1047,10 +1059,21 @@ func DeleteTableIDFromName(name string, tableID int) error {
 			// 尝试 水平定位符号 分割
 			data := []string{}
 			data = strings.Split(value,"	")
-
+			length := len(data)
+			log.Errorf("tables route : %v,len=%v",data,length)
+			if data[length-1] == "" || strings.Index(data[length-1]," ") >= 0 {
+				// data = data[:length-1]
+				data[length-1] = strings.Replace(data[length-1]," ","",-1)
+				log.Debugf("---- last data is space, ignor,after:%v,len=%d",data,length)
+			}
 			if len(data) != 2{
-				// log.Errorf("tables route first error: %v,len=%v",data,len(data))
+				log.Debugf("tables route first error: %v,len=%v",data,len(data))
 				data = strings.Split(value," ")
+				length := len(data)
+				if data[length-1] == "" || strings.Index(data[length-1]," ") >= 0 {
+					data = data[:length-1]
+					log.Debugf("---- last data is space, ignor,after:%v,len=%d",data,length)
+				}
 				if len(data) < 2{
 					log.Infof("delete tables route error: %v,len=%v",data,len(data))
 					writeData = append(writeData,value)
@@ -1100,6 +1123,15 @@ func NetGetRuleObjectList(dstRule []NetRule) []*NT.Rule {
 		rule.IifName = data.IifName
 		rule.Invert = data.Invert
 		rule.Mark = data.Mark
+		if data.Goto > 0 {
+			rule.Goto = data.Goto
+		}
+		// rule.Family = data.Family
+		// rule.Mask = data.Mask
+		// rule.TunID = data.TunID
+		// rule.Flow = data.Flow
+		// rule.SuppressIfgroup = data.SuppressIfgroup
+		// rule.SuppressPrefixlen = data.SuppressPrefixlen
 		ruleList = append(ruleList,rule)
 	}
 	// for i := range ruleList {
@@ -1117,6 +1149,10 @@ func NetAddorDelRule(action string,rule *NT.Rule) error {
 		log.Errorf(txt)
 		return errors.New(txt)
 	}
+
+	log.Debugf("add table:%v,Family:%v,TunID:%v,Flow:%v,SuppressIfgroup:%v,SuppressPrefixlen:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
+		rule.Table,rule.Family,rule.TunID,rule.Flow,rule.SuppressIfgroup,rule.SuppressPrefixlen,rule.Src,rule.Dst,rule.OifName,rule.Priority,
+		rule.IifName,rule.Invert,rule.Mark,rule.Goto,rule.Mask,rule)
 	if action == "add" {
 		if err := NT.RuleAdd(rule); err != nil {
 			log.Errorf("NetAddorDelRule add rule error: %v",err)
@@ -1215,8 +1251,8 @@ func NetVerifyExistRuleList(dstRules []*NT.Rule) error {
 	log.Infof("---list len=%d!",len(rules))
 	// find this rule
 	for i,value := range rules {
-		log.Debugf("index:%v,table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
-		i,value.Table,value.Src,value.Dst,value.OifName,value.Priority,
+		log.Debugf("index:%v,table:%v,Family:%v,TunID:%v,Flow:%v,SuppressIfgroup:%v,SuppressPrefixlen:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
+		i,value.Table,value.Family,value.TunID,value.Flow,value.SuppressIfgroup,value.SuppressPrefixlen,value.Src,value.Dst,value.OifName,value.Priority,
 		value.IifName,value.Invert,value.Mark,value.Goto,value.Mask,value)
 		for index,rule := range dstRules{
 			if IsEqualRule(&value,rule) {
@@ -1228,6 +1264,9 @@ func NetVerifyExistRuleList(dstRules []*NT.Rule) error {
 	}
 	total := 0
 	for _,rule := range dstRules{
+		log.Debugf("table:%v,Src:%v,Dst:%v,OifName:%v,Prio:%v,IifName:%v,Invert:%v,mark:%v,goto:%v,mask=%v! rule:%v!",
+			rule.Table,rule.Src,rule.Dst,rule.OifName,rule.Priority,
+			rule.IifName,rule.Invert,rule.Mark,rule.Goto,rule.Mask,rule)
 		log.Infof("need add rule :%v",rule)
 		NetAddorDelRule("add",rule)
 		total++
@@ -1350,13 +1389,18 @@ func UpdateRouteTable(action string,tableName string, tableID int) error {
 			continue
 		}
 		log.Debugf("get tables: %v",value)
-		for index,v := range []byte(value) {
-			log.Debugf("=====index:%d,%c!",index,v)
-		}
+		// for index,v := range []byte(value) {
+		// 	log.Debugf("=====index:%d,%c!",index,v)
+		// }
 		if strings.Index(value,tableName) > 0 {
 			// 尝试 水平定位符号 分割
 			data := []string{}
 			data = strings.Split(value,"	")
+			length := len(data)
+			if data[length-1] == "" || strings.Index(data[length-1]," ") >= 0 {
+				data = data[:length-1]
+				log.Debugf("---- last data is space, ignor,after:%v,len=%d",data,length)
+			}
 			if len(data) != 2{
 				// log.Errorf("tables route first error: %v,len=%v",data,len(data))
 				data = strings.Split(value," ")
