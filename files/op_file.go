@@ -7,6 +7,10 @@ import(
 	"io/ioutil"
 	"strings"
 	"strconv"
+	"time"
+	"io"
+	"archive/zip"
+	"path/filepath"
 	log "github.com/Sirupsen/logrus"
 	"github.com/yyd01245/go_utils/process"
 )
@@ -139,3 +143,49 @@ func CheckPidFromFile(filename string) error {
 	return process.FindProcess(pid)
 }
 
+func ZipFile(source, target string) error {
+
+	zipFile, err := os.OpenFile(target, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0440)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer zipFile.Close()
+ 
+	archive := zip.NewWriter(zipFile)
+	defer archive.Close()
+ 
+	return filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+ 
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			return err
+		}
+ 
+		if !info.IsDir() {
+			header.Method = zip.Deflate
+		}
+		header.SetModTime(time.Now().UTC())
+		header.Name = path
+		writer, err := archive.CreateHeader(header)
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+		file, err := os.Open(path)
+ 
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+ 
+		_, err = io.Copy(writer, file)
+		return err
+	})
+ }
