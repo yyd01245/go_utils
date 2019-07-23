@@ -42,6 +42,8 @@ func LinkAddGreTun(ifName string,ipLocal string, ipRemote string) error{
 	link := &NT.Gretun{
 		LinkAttrs: NT.LinkAttrs{Name: ifName},
 		Local:     localIP,
+		PMtuDisc:  1,
+		Ttl:			 255,
 		Remote:    remoteIP,
 	}
 

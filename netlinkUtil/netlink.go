@@ -138,6 +138,49 @@ func LinkDelMacVlan(ifName string) error{
 	return nil
 }
 
+func FindIfnameByIP(ipaddr string) string {
+	links, err := NT.LinkList()
+	if err != nil {
+		log.Errorf("Link list error: %v",err)
+		return ""
+	}
+	// log.Infof("---links: %v",links)
+	addrIP := net.ParseIP(ipaddr)
+	if addrIP == nil {
+		log.Errorf("get ip addr:%v not IP Address!",ipaddr)
+		return ""
+	}
+	log.Debugf("addrIP ip=%v",addrIP)
+
+	for _, link := range links {
+		addrs, err := NT.AddrList(link, NT.FAMILY_V4)
+		if err != nil {
+			log.Errorf("Link list addr error: %v",err)
+			continue
+		}
+		if len(addrs) < 1 {
+			log.Debugf("Address not properly")
+			continue
+		}
+
+		for _,addr := range addrs {
+			// 
+			if addr.IPNet != nil {
+				if addr.IPNet.Contains(addrIP) {
+					return link.Attrs().Name;
+				}
+			}
+			if addr.Peer != nil {
+				if addr.Peer.Contains(addrIP) {
+					return link.Attrs().Name;
+				}
+			}
+		}
+		
+	}
+	return ""
+}
+
 func LinkAddVlan(vlanID int,ifName string,parentIfname string) error {
 
 	// list link 
