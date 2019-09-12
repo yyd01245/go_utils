@@ -227,6 +227,45 @@ func LinkAddVlan(vlanID int,ifName string,parentIfname string) error {
 
 	return nil
 }
+// AddLinkAddr 绑定地址为 ip/mask
+func AddLinkOperator(ipaddr string,ifName string,action string) error {
+	local_ip, localNet, err := net.ParseCIDR(ipaddr)
+	if err != nil {
+		txt := fmt.Sprintf("check IP valid err:%v",err)
+		log.Errorf(txt)
+		return errors.New(txt)
+	}
+	var address = &net.IPNet{IP: local_ip, Mask: localNet.Mask}
+
+	// _, address, err := net.ParseCIDR(ipaddr)
+	// if err != nil {
+	// 	txt := fmt.Sprintf("check IP valid err:%v",err)
+	// 	log.Errorf(txt)
+	// 	return errors.New(txt)
+	// }
+	var addr = &NT.Addr{IPNet: address}
+
+	link, err := NT.LinkByName(ifName)
+	if err != nil {
+		log.Errorf("Link byname error: %v",err)
+		return err
+	}
+	if action == "add" {
+		err = NT.AddrAdd(link, addr)
+		if err != nil {
+			log.Errorf("AddrAdd error: %v",err)
+			return err
+		}
+	}else if action == "del" {
+		err = NT.AddrDel(link, addr)
+		if err != nil {
+			log.Errorf("AddrAdd error: %v",err)
+			return err
+		}
+	}
+
+	return nil
+}
 
 // SetLinkAddr 绑定地址为 ip/mask
 func SetLinkAddr(ipaddr string,ifName string) error {
