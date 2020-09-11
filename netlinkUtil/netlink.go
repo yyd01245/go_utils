@@ -253,13 +253,13 @@ func AddLinkOperator(ipaddr string,ifName string,action string) error {
 	if action == "add" {
 		err = NT.AddrAdd(link, addr)
 		if err != nil {
-			log.Errorf("AddrAdd error: %v",err)
+			log.Debugf("AddrAdd error: %v",err)
 			return err
 		}
 	}else if action == "del" {
 		err = NT.AddrDel(link, addr)
 		if err != nil {
-			log.Errorf("AddrAdd error: %v",err)
+			log.Debugf("AddrAdd error: %v",err)
 			return err
 		}
 	}
